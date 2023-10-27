@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 
 export default function App() {
@@ -20,13 +20,17 @@ export default function App() {
       <Row>
         <Col>
           {/* Retângulo rosa 1 */}
-          <View style={styles.estudos}></View>
+          <TouchableOpacity>
+            <Text style={styles.estudos}>Estudos</Text>
+          </TouchableOpacity>
         </Col>
       </Row>
       <Row>
         <Col>
           {/* Retângulo rosa 2 */}
-          <View style={styles.alarmes}></View>
+          <TouchableOpacity>
+            <Text style={styles.alarmes}>Estudos</Text>
+          </TouchableOpacity>
         </Col>
       </Row>
       <Row>
@@ -57,6 +61,10 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginLeft: 30,
     borderRadius: 20,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontSize: 40,
+    fontFamily: 'Arial',
   },
   alarmes: {
     height: 90,
