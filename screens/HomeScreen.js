@@ -9,57 +9,57 @@ export default function HomeScreen({ navigation }) {
   return (
     
     <Grid style={styles.container}>
-        <Row>
-            <Text>oi</Text>
-        </Row>
-        <Row>
-        <Text>oi</Text>
-        </Row>
-        <Row>
-        <Text>oi</Text>
-        </Row>
+
+      <Row size={4} style={styles.botoes}>
+      <Image
+                    source={require('../../Projeto_Integrador_React/assets/1.png')}
+                    style={styles.background}
+                />
+      </Row>
+
         {/* Corpo da página */}
-        <Row style={styles.botoes}>
-          <Col>
+        <Row style={styles.botoes} size={1}>
+          
             {/* Retângulo rosa 1 */}
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Estudos')}>
             <View style={styles.retangulo}>
+            <Image
+                    source={require('../../Projeto_Integrador_React/assets/estudos.png')}
+                    style={styles.image}
+                />
               <Text style={styles.estudos}>Estudos</Text>
-              <Image
-                    source={require('/Users/Daniel/Desktop/Projeto Integrador/Lembrapp/assets/estudos.png')}
-                    style={styles.image}
-                />
+             
               </View>
             </TouchableOpacity>
-          </Col>
+    
         </Row>
-        <Row style={styles.botoes}>
-          <Col>
+        <Row style={styles.botoes} size={1}>
+       
             {/* Retângulo rosa 2 */}
-            <TouchableOpacity >
+            <TouchableOpacity onPress={() => navigation.navigate('Alarmes')}>
             <View style={styles.retangulo}>
-              <Text style={styles.alarmes}>Alarmes</Text>
-              <Image
-                    source={require('/Users/Daniel/Desktop/Projeto Integrador/Lembrapp/assets/alarmes.png')}
+            <Image
+                   source={require('../../Projeto_Integrador_React/assets/alarmes.png')}
                     style={styles.image}
                 />
+              <Text style={styles.alarmes}>Alarmes</Text>
               </View>
             </TouchableOpacity>
-          </Col>
+       
         </Row>
-        <Row style={styles.botoes}>
-          <Col>
+        <Row style={styles.botoes} size={1}>
+        
             {/* Retângulo rosa 3 */}
             <TouchableOpacity onPress={() => navigation.navigate('Aniversario')} >
             <View style={styles.retangulo}>
-              <Text style={styles.aniversario}>Aniversários</Text>
             <Image
-                    source={require('/Users/Daniel/Desktop/Projeto Integrador/Lembrapp/assets/aniversario.png')}
+                  source={require('../../Projeto_Integrador_React/assets/aniversario.png')}
                     style={styles.image}
                 />
+              <Text style={styles.aniversario}>Aniversários</Text>
                  </View>
             </TouchableOpacity>
-          </Col>
+        
         </Row>
   
       </Grid>
@@ -68,53 +68,48 @@ export default function HomeScreen({ navigation }) {
   }
   
   const styles = StyleSheet.create({
-
-    headerText: {
-      fontSize: 24,
-      textAlign: 'left',
-      paddingLeft: 20,
+    container: {
+      flex: 1,
+      backgroundColor: '#FCD166',
+      justifyContent: 'center', // Center horizontally
+    },
+    background: {
+      width: 300,
+      height: 400,
+      marginLeft: 25,
     },
     estudos: {
-        height: 90,
-        width: 240,
-        backgroundColor: '#EC87C0',
-        marginLeft: 30,
-        paddingLeft: 20,
-        borderRadius: 20,
-        textAlign: 'left',
-        textAlignVertical: 'center',
-        fontSize: 35,
+      textAlignVertical: 'center',
+      fontSize: 25,
+      marginLeft: 10,
     },
     alarmes: {
-        height: 90,
-        width: 240,
-        backgroundColor: '#EC87C0',
-        marginLeft: 30,
-        paddingLeft: 20,
-        borderRadius: 20,
-        textAlign: 'left',
-        textAlignVertical: 'center',
-        fontSize: 35,
+      marginLeft: 10,
+      textAlignVertical: 'center',
+      fontSize: 25,
     },
     aniversario: {
-      height: 90,
-      width: 300,
-      backgroundColor: '#EC87C0',
-      marginLeft: 30,
-      paddingLeft: 20,
-      borderRadius: 20,
-      textAlign: 'left',
       textAlignVertical: 'center',
-      fontSize: 35,
+      fontSize: 25,
+      marginLeft: 10,
     },
-    image:{
+    image: {
       width: 60,
       height: 60,
-      marginLeft: -70,
     },
     retangulo: {
-        flexDirection: 'row',
-        alignItems: 'center',
-      },
-    }
-  );
+      flexDirection: 'row',
+      alignItems: 'center',
+      height: 70,
+      width: 260,
+      backgroundColor: '#E6E9ED',
+      marginLeft: 50,
+      paddingLeft: 20,
+      borderRadius: 20,
+      textAlign: 'right',
+      textAlignVertical: 'center',
+      fontSize: 35,
+      borderWidth: 2, // Largura da borda
+      borderColor: 'black', // Cor da borda
+    },
+  });
