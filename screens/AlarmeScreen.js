@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,10 @@ import {
   FlatList,
   TextInput,
   Modal,
-  Button,
   TouchableWithoutFeedback,
 } from 'react-native';
 import { Grid, Row } from 'react-native-easy-grid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AlarmeScreen({ navigation }) {
   const [showMiniDisplay, setShowMiniDisplay] = useState(false);
@@ -19,8 +19,39 @@ export default function AlarmeScreen({ navigation }) {
   const [novoAlarme, setNovoAlarme] = useState({
     horario: '',
     descricao: '',
-    nome: '',
+    titulo: '',
   });
+
+  const [alarmesData, setAlarmesData] = useState([]);
+
+  // Carregar dados dos alarmes ao iniciar o componente
+  useEffect(() => {
+    const carregarDados = async () => {
+      try {
+        const dadosArmazenados = await AsyncStorage.getItem('alarmesData');
+        if (dadosArmazenados) {
+          setAlarmesData(JSON.parse(dadosArmazenados));
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
+    };
+
+    carregarDados();
+  }, []);
+
+  // Salvar dados dos alarmes ao atualizar
+  useEffect(() => {
+    const salvarDados = async () => {
+      try {
+        await AsyncStorage.setItem('alarmesData', JSON.stringify(alarmesData));
+      } catch (error) {
+        console.error('Erro ao salvar dados:', error);
+      }
+    };
+
+    salvarDados();
+  }, [alarmesData]);
 
   const CustomButton = ({ onPress, title, marginBottom }) => (
     <TouchableOpacity
@@ -31,20 +62,23 @@ export default function AlarmeScreen({ navigation }) {
     </TouchableOpacity>
   );
 
-  const alarmesData = [
-    { id: '1', titulo: 'Reunião', horario: '08:00', descricao: 'Reunião importante' },
-    { id: '2', titulo: 'Almoço', horario: '12:30', descricao: 'Almoço' },
-    // Adicione mais dados conforme necessário
-  ];
-
   const renderAlarmeItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.itemContainer}
-      onPress={() => handleAlarmePress(item)}
-    >
-      <Text style={styles.itemHorario}>{item.horario}</Text>
-      <Text style={styles.itemTitulo}>{item.titulo}</Text>
-    </TouchableOpacity>
+    <View style={styles.itemContainer}>
+      <TouchableOpacity
+        style={styles.alarmeItem}
+        onPress={() => handleAlarmePress(item)}
+      >
+        <Text style={styles.itemHorario}>{item.horario}</Text>
+        <Text style={styles.itemTitulo}>{item.titulo}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.excluirButton}
+        onPress={() => excluirAlarme(item.id)}
+      >
+        <Text style={styles.excluirButtonText}>Excluir</Text>
+      </TouchableOpacity>
+    </View>
   );
 
   const handleAlarmePress = (alarme) => {
@@ -63,17 +97,28 @@ export default function AlarmeScreen({ navigation }) {
 
   const closeAddAlarmeModal = () => {
     setShowAddAlarmeModal(false);
-    setNovoAlarme({ horario: '', descricao: '', nome: '' });
+    setNovoAlarme({ horario: '', descricao: '', titulo: '' });
   };
 
   const adicionarAlarme = () => {
-    alarmesData.push({
-      id: String(alarmesData.length + 1),
+    const novoId = String(alarmesData.length + 1);
+    const novoAlarmeData = {
+      id: novoId,
       horario: novoAlarme.horario,
       descricao: novoAlarme.descricao,
-      titulo: novoAlarme.titulo, // Adicionando o campo de título
-    });
+      titulo: novoAlarme.titulo,
+    };
+
+    // Atualizar o estado alarmesData
+    setAlarmesData([...alarmesData, novoAlarmeData]);
+
+    // Fechar o modal
     closeAddAlarmeModal();
+  };
+
+  const excluirAlarme = (alarmeId) => {
+    const novosAlarmes = alarmesData.filter((alarme) => alarme.id !== alarmeId);
+    setAlarmesData(novosAlarmes);
   };
 
   return (
@@ -104,7 +149,7 @@ export default function AlarmeScreen({ navigation }) {
       )}
 
       <Row style={styles.botoes} size={1}>
-      <TouchableWithoutFeedback onPress={openAddAlarmeModal}>
+        <TouchableWithoutFeedback onPress={openAddAlarmeModal}>
           <View style={styles.botaoAdicionar}>
             <Text style={styles.textoBotaoAdicionar}>Adicionar Alarme</Text>
           </View>
@@ -200,7 +245,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(180, 180, 180, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -210,8 +255,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   fecharMiniDisplay: {
-    color: 'blue',
-    fontSize: 16,
+    marginTop: 30,
+    color: '#822E5E',
+    fontSize: 20,
     fontWeight: 'bold',
   },
   modalContainer: {
@@ -252,6 +298,25 @@ const styles = StyleSheet.create({
   customButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#822E5E',
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E6E9ED',
+    padding: 20,
+  },
+  alarmeItem: {
+    flex: 1,
+  },
+  excluirButton: {
+    backgroundColor: '#EA86BF',
+    borderRadius: 10,
+    padding: 10,
+  },
+  excluirButtonText: {
     color: '#822E5E',
   },
 });
