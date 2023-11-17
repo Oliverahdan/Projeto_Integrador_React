@@ -71,12 +71,13 @@ export default function HomeScreen({ navigation }) {
     container: {
       flex: 1,
       backgroundColor: '#FCD166',
-      justifyContent: 'center', // Center horizontally
+      justifyContent: 'center',
+      alignContent:'center' // Center horizontally
     },
     background: {
       width: 300,
       height: 400,
-      marginLeft: 25,
+      marginLeft: '10%',
     },
     estudos: {
       textAlignVertical: 'center',
@@ -100,11 +101,11 @@ export default function HomeScreen({ navigation }) {
     retangulo: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'center',
       height: 70,
       width: 260,
       backgroundColor: '#E6E9ED',
-      marginLeft: 50,
-      paddingLeft: 20,
+      marginLeft: '20%',
       borderRadius: 20,
       textAlign: 'right',
       textAlignVertical: 'center',

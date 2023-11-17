@@ -27,7 +27,24 @@ export default function App() {
       />
         <Stack.Screen name="Aniversario" component={AniversarioScreen} />
         <Stack.Screen name="Estudos" component={EstudosScreen} />
-        <Stack.Screen name="Alarmes" component={AlarmeScreen} />
+        <Stack.Screen 
+        name="Alarmes"
+        component={AlarmeScreen}
+        options={{
+          headerStyle: {
+            backgroundColor:'#FCD167',
+            height: 90,
+          },
+          headerTitleStyle: {
+            fontSize: 30,
+            color:'#765A13',
+            marginTop: -35,
+          },
+          headerLeftContainerStyle: {
+            marginTop: -30, // Ajuste este valor conforme necessário
+          },
+        }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
