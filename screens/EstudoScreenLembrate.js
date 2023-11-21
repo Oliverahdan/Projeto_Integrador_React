@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 
-const EstudosScreenLembrate = () => {
+const EstudoScreenLembrate = () => {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text style={{ fontSize: 20 }}>Esta é a tela EstudosScreenLembrate!</Text>
@@ -9,4 +9,4 @@ const EstudosScreenLembrate = () => {
   );
 };
 
-export default EstudosScreenLembrate;
+export default EstudoScreenLembrate;

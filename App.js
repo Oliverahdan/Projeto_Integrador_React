@@ -5,6 +5,8 @@ import HomeScreen from './screens/HomeScreen';
 import AlarmeScreen from './screens/AlarmeScreen';
 import EstudosScreen from './screens/EstudosScreen';
 import AniversarioScreen from './screens/AniversarioScreen';
+import EstudoScreenLembrate from './screens/EstudoScreenLembrate';
+
 
 const Stack = createStackNavigator();
 
@@ -45,6 +47,7 @@ export default function App() {
           },
         }}
         />
+         <Stack.Screen name="EstudoScreenLembrate" component={EstudoScreenLembrate} />
       </Stack.Navigator>
     </NavigationContainer>
   );
