@@ -20,11 +20,10 @@ export default function AlarmeScreen({ navigation }) {
     horario: '',
     descricao: '',
     titulo: '',
+    recorrencia: 'diario', // Inicie com diário como padrão
   });
-
   const [alarmesData, setAlarmesData] = useState([]);
 
-  // Carregar dados dos alarmes ao iniciar o componente
   useEffect(() => {
     const carregarDados = async () => {
       try {
@@ -40,7 +39,6 @@ export default function AlarmeScreen({ navigation }) {
     carregarDados();
   }, []);
 
-  // Salvar dados dos alarmes ao atualizar
   useEffect(() => {
     const salvarDados = async () => {
       try {
@@ -97,7 +95,7 @@ export default function AlarmeScreen({ navigation }) {
 
   const closeAddAlarmeModal = () => {
     setShowAddAlarmeModal(false);
-    setNovoAlarme({ horario: '', descricao: '', titulo: '' });
+    setNovoAlarme({ horario: '', descricao: '', titulo: '', recorrencia: 'diario' });
   };
 
   const adicionarAlarme = () => {
@@ -107,12 +105,11 @@ export default function AlarmeScreen({ navigation }) {
       horario: novoAlarme.horario,
       descricao: novoAlarme.descricao,
       titulo: novoAlarme.titulo,
+      recorrencia: novoAlarme.recorrencia,
     };
 
-    // Atualizar o estado alarmesData
     setAlarmesData([...alarmesData, novoAlarmeData]);
 
-    // Fechar o modal
     closeAddAlarmeModal();
   };
 
@@ -188,6 +185,39 @@ export default function AlarmeScreen({ navigation }) {
                 setNovoAlarme({ ...novoAlarme, descricao: text })
               }
             />
+            <View style={styles.recorrenciaContainer}>
+              <Text style={styles.label}>Recorrência:</Text>
+              <View style={styles.recorrenciaButtons}>
+                <TouchableOpacity
+                  style={[styles.recorrenciaButton, 
+                           novoAlarme.recorrencia === 'diario' && styles.selectedButton]}
+                  onPress={() => setNovoAlarme({ ...novoAlarme, recorrencia: 'diario' })}
+                >
+                  <Text>Diário</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.recorrenciaButton, 
+                           novoAlarme.recorrencia === 'semanal' && styles.selectedButton]}
+                  onPress={() => setNovoAlarme({ ...novoAlarme, recorrencia: 'semanal' })}
+                >
+                  <Text>Semanal</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.recorrenciaButton, 
+                           novoAlarme.recorrencia === 'mensal' && styles.selectedButton]}
+                  onPress={() => setNovoAlarme({ ...novoAlarme, recorrencia: 'mensal' })}
+                >
+                  <Text>Mensal</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.recorrenciaButton, 
+                           novoAlarme.recorrencia === 'anual' && styles.selectedButton]}
+                  onPress={() => setNovoAlarme({ ...novoAlarme, recorrencia: 'anual' })}
+                >
+                  <Text>Anual</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
             <CustomButton onPress={adicionarAlarme} title="Adicionar" marginBottom={10} />
             <CustomButton onPress={closeAddAlarmeModal} title="Cancelar" marginBottom={0} />
           </View>
@@ -202,12 +232,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#E8EBEE',
     justifyContent: 'center',
-    alignContent: 'center', // Center horizontally
-  },
-  background: {
-    width: 300,
-    height: 400,
-    marginLeft: 25,
+    alignContent: 'center',
   },
   itemContainer: {
     borderBottomWidth: 1,
@@ -217,11 +242,7 @@ const styles = StyleSheet.create({
   itemHorario: {
     fontSize: 18,
     fontWeight: 'bold',
-    color:'#822E5E',
-  },
-  itemDescricao: {
-    fontSize: 16,
-    marginTop: 5,
+    color: '#822E5E',
   },
   botaoAdicionar: {
     backgroundColor: '#EA86BF',
@@ -229,7 +250,7 @@ const styles = StyleSheet.create({
     padding: 15,
     margin: 10,
     alignItems: 'center',
-    marginLeft:'27.5%',
+    marginLeft: '27.5%',
     height: 70,
     justifyContent: 'center',
     marginTop: 30,
@@ -287,7 +308,7 @@ const styles = StyleSheet.create({
   itemTitulo: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2E3944', // Adicione uma cor apropriada para o título
+    color: '#2E3944',
   },
   customButton: {
     backgroundColor: '#EA86BF',
@@ -299,6 +320,34 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#822E5E',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 5,
+    color: '#2E3944',
+  },
+  recorrenciaContainer: {
+    marginTop: 5,
+    marginBottom: 20,
+  },
+  recorrenciaButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 5,
+  },
+  recorrenciaButton: {
+    backgroundColor: '#EA86BF',
+    borderRadius: 10,
+    padding: 10,
+    flex: 1,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  selectedButton: {
+    backgroundColor: '#822E5E',
+    color: 'white',
   },
   itemContainer: {
     flexDirection: 'row',

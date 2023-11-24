@@ -21,7 +21,7 @@ export default function HomeScreen({ navigation }) {
         <Row style={styles.botoes} size={1}>
           
             {/* Retângulo rosa 1 */}
-            <TouchableOpacity onPress={() => navigation.navigate('Estudos')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Estudos')} style={styles.botao}>
             <View style={styles.retangulo}>
             <Image
                     source={require('../../Projeto_Integrador_React/assets/estudos.png')}
@@ -36,7 +36,7 @@ export default function HomeScreen({ navigation }) {
         <Row style={styles.botoes} size={1}>
        
             {/* Retângulo rosa 2 */}
-            <TouchableOpacity onPress={() => navigation.navigate('Alarmes')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Alarmes')} style={styles.botao}>
             <View style={styles.retangulo}>
             <Image
                    source={require('../../Projeto_Integrador_React/assets/alarmes.png')}
@@ -50,7 +50,7 @@ export default function HomeScreen({ navigation }) {
         <Row style={styles.botoes} size={1}>
         
             {/* Retângulo rosa 3 */}
-            <TouchableOpacity onPress={() => navigation.navigate('Aniversario')} >
+            <TouchableOpacity onPress={() => navigation.navigate('Aniversario')} style={styles.botao}>
             <View style={styles.retangulo}>
             <Image
                   source={require('../../Projeto_Integrador_React/assets/aniversario.png')}
@@ -95,17 +95,17 @@ export default function HomeScreen({ navigation }) {
       marginLeft: 10,
     },
     image: {
-      width: 60,
-      height: 60,
+      width: 50,
+      height: 50,
     },
     retangulo: {
+      display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       height: 70,
       width: 260,
       backgroundColor: '#E6E9ED',
-      marginLeft: '20%',
       borderRadius: 20,
       textAlign: 'right',
       textAlignVertical: 'center',
@@ -113,4 +113,10 @@ export default function HomeScreen({ navigation }) {
       borderWidth: 2, // Largura da borda
       borderColor: 'black', // Cor da borda
     },
+    botao:{
+      display: 'flex',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      width: '260px'
+    }
   });

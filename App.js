@@ -33,15 +33,15 @@ export default function App() {
         options={{
           headerStyle: {
             backgroundColor:'#FCD167',
-            height: 90,
+            height: 100,
           },
           headerTitleStyle: {
-            fontSize: 30,
+            fontSize: 25,
             color:'#765A13',
             marginTop: -35,
           },
           headerLeftContainerStyle: {
-            marginTop: -30, // Ajuste este valor conforme necessário
+            marginTop: -35, // Ajuste este valor conforme necessário
           },
         }}
         />
