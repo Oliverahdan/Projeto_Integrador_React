@@ -5,16 +5,18 @@ import { Picker } from "@react-native-picker/picker";
 import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
+const competencias = [
+  "Linguagens",
+  "Matemática",
+  "Ciências Humanas",
+  "Ciências da Natureza ",
+];
+
 export default function EstudosScreen() {
   const navigation = useNavigation();
 
-  const [selectedDayValue, setSelectedDayValue] = useState("0");
   const [selectedHourValue, setSelectedHourValue] = useState("1");
   const [selectedSubjectValue, setSelectedSubjectValue] = useState("0");
-
-  const handleDayPickerChange = (itemValue) => {
-    setSelectedDayValue(itemValue);
-  };
 
   const handleHourPickerChange = (itemValue) => {
     setSelectedHourValue(itemValue);
@@ -24,26 +26,15 @@ export default function EstudosScreen() {
     setSelectedSubjectValue(itemValue);
   };
 
+  const handleContinue = () => {
+    navigation.navigate("EstudoScreenLembrate", {
+      selectedHourValue,
+      selectedSubjectValue: competencias[selectedSubjectValue],
+    });
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.column}>
-        <Text style={styles.title}>Quantos dias você irá estudar</Text>
-        <Picker
-          style={[styles.picker, styles.pickerBackground1]}
-          selectedValue={selectedDayValue}
-          onValueChange={handleDayPickerChange}
-        >
-          {[1, 2, 3, 4, 5, 6].map((day, index) => (
-            <Picker.Item
-              key={index}
-              label={day.toString()}
-              value={index.toString()}
-              color="black" 
-            />
-          ))}
-        </Picker>
-      </View>
-
       <View style={styles.column}>
         <Text style={styles.title}>Quantas horas por dia você irá estudar</Text>
         <Picker
@@ -56,7 +47,7 @@ export default function EstudosScreen() {
               key={index}
               label={hour.toString()}
               value={hour.toString()}
-              color="black" 
+              color="black"
             />
           ))}
         </Picker>
@@ -69,35 +60,23 @@ export default function EstudosScreen() {
           selectedValue={selectedSubjectValue}
           onValueChange={handleSubjectPickerChange}
         >
-          <Picker.Item
-            label="Linguagens, Códigos e suas Tecnologias:"
-            value="0"
-            color="black" 
-          />
-          <Picker.Item
-            label="Matemática e suas Tecnologias:"
-            value="1"
-            color="black" 
-          />
-          <Picker.Item
-            label="Ciências Humanas e suas Tecnologias:"
-            value="2"
-            color="black" 
-          />
-          <Picker.Item
-            label="Ciências da Natureza e suas Tecnologias:"
-            value="3"
-            color="black" 
-          />
+          {competencias.map((competencia, index) => (
+            <Picker.Item
+              key={index}
+              label={competencia}
+              value={index.toString()}
+              color="black"
+            />
+          ))}
         </Picker>
       </View>
 
       <TouchableOpacity
-  style={styles.continueButton}
-  onPress={() => navigation.navigate("EstudoScreenLembrate")}
->
-  <Text style={{ color: 'black', textAlign: "center" }}>Continuar</Text>
-</TouchableOpacity>
+        style={styles.continueButton}
+        onPress={handleContinue}
+      >
+        <Text style={{ color: 'black', textAlign: "center" }}>Continuar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -120,9 +99,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     marginBottom: 8,
-  },
-  pickerBackground1: {
-    backgroundColor: '#EA86BF',
   },
   pickerBackground2: {
     backgroundColor: '#EA86BF',
