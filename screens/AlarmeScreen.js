@@ -99,6 +99,31 @@ export default function AlarmeScreen({ navigation }) {
   };
 
   const adicionarAlarme = () => {
+    // Verifica se o horário inserido é um horário válido
+    const horarioParts = novoAlarme.horario.split(':');
+    
+    if (
+      horarioParts.length !== 2 ||
+      isNaN(horarioParts[0]) ||
+      isNaN(horarioParts[1]) ||
+      parseInt(horarioParts[0]) < 0 ||
+      parseInt(horarioParts[0]) > 23 ||
+      parseInt(horarioParts[1]) < 0 ||
+      parseInt(horarioParts[1]) > 59
+    ) {
+      alert('Por favor, insira um horário válido no formato HH:mm');
+      return;
+    }
+  
+    const now = new Date();
+    const selectedTime = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      parseInt(horarioParts[0]),
+      parseInt(horarioParts[1])
+    );
+  
     const novoId = String(alarmesData.length + 1);
     const novoAlarmeData = {
       id: novoId,
@@ -107,9 +132,9 @@ export default function AlarmeScreen({ navigation }) {
       titulo: novoAlarme.titulo,
       recorrencia: novoAlarme.recorrencia,
     };
-
+  
     setAlarmesData([...alarmesData, novoAlarmeData]);
-
+  
     closeAddAlarmeModal();
   };
 
@@ -153,76 +178,109 @@ export default function AlarmeScreen({ navigation }) {
         </TouchableWithoutFeedback>
       </Row>
 
+
       <Modal
-        visible={showAddAlarmeModal}
-        animationType="slide"
-        transparent={true}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Adicionar Novo Alarme</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Horário"
-              value={novoAlarme.horario}
-              onChangeText={(text) =>
-                setNovoAlarme({ ...novoAlarme, horario: text })
+  visible={showAddAlarmeModal}
+  animationType="slide"
+  transparent={true}
+>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Adicionar Novo Alarme</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Horário"
+        value={novoAlarme.horario}
+        onChangeText={(text) =>
+          setNovoAlarme({ ...novoAlarme, horario: text })
+        }
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Título"
+        value={novoAlarme.titulo}
+        onChangeText={(text) =>
+          setNovoAlarme({ ...novoAlarme, titulo: text })
+        }
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Descrição"
+        value={novoAlarme.descricao}
+        onChangeText={(text) =>
+          setNovoAlarme({ ...novoAlarme, descricao: text })
+        }
+      />
+      <View style={styles.recorrenciaContainer}>
+        <Text style={styles.label}>Recorrência:</Text>
+        <View style={styles.recorrenciaButtons}>
+          <View style={styles.recorrenciaRow}>
+            <TouchableOpacity
+              style={[
+                styles.recorrenciaButton,
+                novoAlarme.recorrencia === 'diario' &&
+                  styles.selectedButton,
+              ]}
+              onPress={() =>
+                setNovoAlarme({ ...novoAlarme, recorrencia: 'diario' })
               }
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Título"
-              value={novoAlarme.titulo}
-              onChangeText={(text) =>
-                setNovoAlarme({ ...novoAlarme, titulo: text })
+            >
+              <Text>Diário</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.recorrenciaButton,
+                novoAlarme.recorrencia === 'semanal' &&
+                  styles.selectedButton,
+              ]}
+              onPress={() =>
+                setNovoAlarme({ ...novoAlarme, recorrencia: 'semanal' })
               }
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Descrição"
-              value={novoAlarme.descricao}
-              onChangeText={(text) =>
-                setNovoAlarme({ ...novoAlarme, descricao: text })
+            >
+              <Text>Semanal</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.recorrenciaRow}>
+            <TouchableOpacity
+              style={[
+                styles.recorrenciaButton,
+                novoAlarme.recorrencia === 'mensal' &&
+                  styles.selectedButton,
+              ]}
+              onPress={() =>
+                setNovoAlarme({ ...novoAlarme, recorrencia: 'mensal' })
               }
-            />
-            <View style={styles.recorrenciaContainer}>
-              <Text style={styles.label}>Recorrência:</Text>
-              <View style={styles.recorrenciaButtons}>
-                <TouchableOpacity
-                  style={[styles.recorrenciaButton, 
-                           novoAlarme.recorrencia === 'diario' && styles.selectedButton]}
-                  onPress={() => setNovoAlarme({ ...novoAlarme, recorrencia: 'diario' })}
-                >
-                  <Text>Diário</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.recorrenciaButton, 
-                           novoAlarme.recorrencia === 'semanal' && styles.selectedButton]}
-                  onPress={() => setNovoAlarme({ ...novoAlarme, recorrencia: 'semanal' })}
-                >
-                  <Text>Semanal</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.recorrenciaButton, 
-                           novoAlarme.recorrencia === 'mensal' && styles.selectedButton]}
-                  onPress={() => setNovoAlarme({ ...novoAlarme, recorrencia: 'mensal' })}
-                >
-                  <Text>Mensal</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.recorrenciaButton, 
-                           novoAlarme.recorrencia === 'anual' && styles.selectedButton]}
-                  onPress={() => setNovoAlarme({ ...novoAlarme, recorrencia: 'anual' })}
-                >
-                  <Text>Anual</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <CustomButton onPress={adicionarAlarme} title="Adicionar" marginBottom={10} />
-            <CustomButton onPress={closeAddAlarmeModal} title="Cancelar" marginBottom={0} />
+            >
+              <Text>Mensal</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.recorrenciaButton,
+                novoAlarme.recorrencia === 'anual' &&
+                  styles.selectedButton,
+              ]}
+              onPress={() =>
+                setNovoAlarme({ ...novoAlarme, recorrencia: 'anual' })
+              }
+            >
+              <Text>Anual</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </View>
+      <CustomButton
+        onPress={adicionarAlarme}
+        title="Adicionar"
+        marginBottom={10}
+      />
+      <CustomButton
+        onPress={closeAddAlarmeModal}
+        title="Cancelar"
+        marginBottom={0}
+      />
+    </View>
+  </View>
+</Modal>
     </Grid>
   );
 }
@@ -329,19 +387,22 @@ const styles = StyleSheet.create({
     color: '#2E3944',
   },
   recorrenciaContainer: {
-    marginTop: 5,
-    marginBottom: 20,
+    marginTop: 10,
   },
   recorrenciaButtons: {
+    flexDirection: 'column',
+    marginTop: 5,
+  },
+  recorrenciaRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 5,
   },
   recorrenciaButton: {
     backgroundColor: '#EA86BF',
     borderRadius: 10,
     padding: 10,
     flex: 1,
+    marginBottom: 10,
     marginHorizontal: 5,
     alignItems: 'center',
   },

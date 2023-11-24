@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+
 export default function EstudosScreen() {
   const navigation = useNavigation();
 
@@ -37,6 +38,7 @@ export default function EstudosScreen() {
               key={index}
               label={day.toString()}
               value={index.toString()}
+              color="black" 
             />
           ))}
         </Picker>
@@ -54,6 +56,7 @@ export default function EstudosScreen() {
               key={index}
               label={hour.toString()}
               value={hour.toString()}
+              color="black" 
             />
           ))}
         </Picker>
@@ -69,22 +72,32 @@ export default function EstudosScreen() {
           <Picker.Item
             label="Linguagens, Códigos e suas Tecnologias:"
             value="0"
+            color="black" 
           />
-          <Picker.Item label="Matemática e suas Tecnologias:" value="1" />
-          <Picker.Item label="Ciências Humanas e suas Tecnologias:" value="2" />
+          <Picker.Item
+            label="Matemática e suas Tecnologias:"
+            value="1"
+            color="black" 
+          />
+          <Picker.Item
+            label="Ciências Humanas e suas Tecnologias:"
+            value="2"
+            color="black" 
+          />
           <Picker.Item
             label="Ciências da Natureza e suas Tecnologias:"
             value="3"
+            color="black" 
           />
         </Picker>
       </View>
 
       <TouchableOpacity
-        style={styles.continueButton}
-        onPress={() => navigation.navigate("EstudoScreenLembrate")}
-      >
-        <Text style={{ color: "#fff", textAlign: "center" }}>Continuar</Text>
-      </TouchableOpacity>
+  style={styles.continueButton}
+  onPress={() => navigation.navigate("EstudoScreenLembrate")}
+>
+  <Text style={{ color: 'black', textAlign: "center" }}>Continuar</Text>
+</TouchableOpacity>
     </View>
   );
 }
@@ -92,7 +105,7 @@ export default function EstudosScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ea86bf",
+    backgroundColor: '#E8EBEE',
     justifyContent: "center",
     alignItems: "center",
   },
@@ -109,20 +122,21 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   pickerBackground1: {
-    backgroundColor: "#f9d477",
+    backgroundColor: '#EA86BF',
   },
   pickerBackground2: {
-    backgroundColor: "#f9d477",
+    backgroundColor: '#EA86BF',
   },
   pickerBackground3: {
-    backgroundColor: "#f9d477",
+    backgroundColor: '#EA86BF',
   },
   continueButton: {
     marginTop: 20,
     width: 150,
     height: 60,
-    backgroundColor: "#822e5e",
+    backgroundColor: '#EA86BF',
     justifyContent: "center",
     alignItems: "center",
+    color: 'black',
   },
 });
