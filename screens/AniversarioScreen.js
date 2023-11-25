@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Button, FlatList } from 'react-native';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { Picker } from "@react-native-picker/picker";
 import { Calendar } from 'react-native-calendars';
@@ -9,11 +9,13 @@ export default function AniversarioScreen() {
   const [dataNascimento, setDataNascimento] = useState('');
   const [isCalendarVisible, setCalendarVisible] = useState(false);
   const [intervaloNotificacao, setIntervaloNotificacao] = useState('');
+  const [aniversarios, setAniversarios] = useState([]);
 
   const handleDateSelect = (date) => {
-    setDataNascimento(date.dateString);
     setCalendarVisible(false);
+    setDataNascimento(date.dateString);
   };
+
 
   const toggleCalendar = () => {
     setCalendarVisible(!isCalendarVisible);
@@ -21,6 +23,22 @@ export default function AniversarioScreen() {
 
   const handleIntervaloNotificacaoChange = (value) => {
     setIntervaloNotificacao(value);
+  };
+
+  const handleAdicionar = () => {
+    // Lógica para adicionar o aniversário à lista
+    const novoAniversario = {
+      nome: nome,
+      dataNascimento: dataNascimento,
+      intervaloNotificacao: intervaloNotificacao,
+    };
+
+    setAniversarios([...aniversarios, novoAniversario]);
+
+    // Limpar os campos após adicionar
+    setNome('');
+    setDataNascimento('');
+    setIntervaloNotificacao('');
   };
 
   return (
@@ -39,38 +57,42 @@ export default function AniversarioScreen() {
           </View>
 
           <View style={styles.nasciContainer}>
-      <Text style={styles.label}>Data de Nascimento:</Text>
-      <View style={styles.dataContainer}>
-        <TouchableOpacity onPress={toggleCalendar} style={styles.touch}>
-          <Image source={require('../assets/calendario.png')} style={styles.calendarIcon} />
-          {dataNascimento !== '' && (
-          <Text style={styles.selectedDate}>{formatDate(dataNascimento)}</Text>
-        )}
-        </TouchableOpacity>
-        
-        {isCalendarVisible && (
-          <View style={styles.calendarContainer}>
-          <Calendar
-            onDayPress={handleDateSelect}
-            markedDates={{
-              [dataNascimento]: {
-                selected: true,
-                marked: true,
-                selectedColor: '#EA86BF',
-              },
-            }}
-            theme={{
-              textSectionTitleColor: 'black',
-              selectedDayBackgroundColor: 'blue',
-              selectedDayTextColor: 'white',
-              todayTextColor: 'blue',
-            }}
-          />
-          </View>
-        )}
-        
-      </View>
-    </View>
+              <Text style={styles.label}>Data de Nascimento/Inicio:</Text>
+              <View style={styles.dataContainer}>
+                <TouchableOpacity onPress={toggleCalendar} style={styles.touch}>
+                  <Image source={require('../assets/calendario.png')} style={styles.calendarIcon} />
+                  {dataNascimento !== '' && (
+                    
+                    <Text style={styles.selectedDate}>{formatDate(dataNascimento)}</Text>
+                    
+                  )}
+                     
+                </TouchableOpacity>
+
+                {isCalendarVisible && (
+                  <View style={styles.calendarContainer}>
+                    <Calendar
+                      onDayPress={handleDateSelect}
+                      markedDates={{
+                        [dataNascimento]: {
+                          selected: true,
+                          marked: true,
+                          selectedColor: '#EA86BF',
+                        },
+                      }}
+                      theme={{
+                        calendarBackground: 'white',
+                        textSectionTitleColor: 'black',
+                        selectedDayBackgroundColor: 'blue',
+                        selectedDayTextColor: 'white',
+                        todayTextColor: 'blue',
+                      }}
+                    />
+                  </View>
+                )}
+
+              </View>
+            </View>
 
 
           <View style={styles.nasciContainer}>
@@ -85,6 +107,22 @@ export default function AniversarioScreen() {
               </Picker>
               </View>
             </View>
+
+            <View style={styles.adicionar}>
+            <Button title="Adicionar" onPress={handleAdicionar} />
+            </View>
+
+
+            <FlatList
+          data={aniversarios}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.aniversarioItem}>
+              <Text>{`Nome: ${item.nome}, Data de Nascimento: ${item.dataNascimento}, Intervalo de Notificação: ${item.intervaloNotificacao}`}</Text>
+            </View>
+          )}
+        />
+
         </Col>
       </Row>
 
@@ -95,10 +133,10 @@ export default function AniversarioScreen() {
 }
 
 const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
+  const date = new Date(dateString + 'T00:00:00Z'); // Adiciona a hora UTC 00:00:00
+  const day = date.getUTCDate(); // Obtém o dia em UTC
+  const month = date.getUTCMonth() + 1; // Obtém o mês em UTC (lembrando que janeiro é 0)
+  const year = date.getUTCFullYear(); // Obtém o ano em UTC
 
   return `${day}/${month}/${year}`;
 };
@@ -110,7 +148,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   touch: {
-
     flexDirection: 'row',
   },
   col: {
@@ -161,6 +198,9 @@ const styles = StyleSheet.create({
     borderColor: 'black', // Cor da borda
     borderRadius: 5, // Borda arredondada
     overflow: 'hidden',
-
+  },
+  adicionar:{
+    marginTop: 20,
+    width: '100%', 
   },
 });

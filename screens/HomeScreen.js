@@ -50,7 +50,7 @@ export default function HomeScreen({ navigation }) {
         <Row style={styles.botoes} size={1}>
         
             {/* Retângulo rosa 3 */}
-            <TouchableOpacity onPress={() => navigation.navigate('Aniversario')} style={styles.botao}>
+            <TouchableOpacity onPress={() => navigation.navigate('Aniversários')} style={styles.botao}>
             <View style={styles.retangulo}>
             <Image
                   source={require('../../Projeto_Integrador_React/assets/aniversario.png')}

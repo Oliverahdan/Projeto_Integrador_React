@@ -27,7 +27,7 @@ export default function App() {
           },
         }}
       />
-        <Stack.Screen name="Aniversario" 
+        <Stack.Screen name="Aniversários" 
         component={AniversarioScreen} 
         options={{
           headerStyle: {
@@ -37,10 +37,10 @@ export default function App() {
           headerTitleStyle: {
             fontSize: 25,
             color:'#765A13',
-            marginTop: -35,
+            marginTop: -10,
           },
           headerLeftContainerStyle: {
-            marginTop: -35, // Ajuste este valor conforme necessário
+            marginTop: -10, // Ajuste este valor conforme necessário
           },
         }} />
         <Stack.Screen name="Estudos" component={EstudosScreen} />
