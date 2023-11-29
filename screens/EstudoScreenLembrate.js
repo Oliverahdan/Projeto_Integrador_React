@@ -1,5 +1,4 @@
-// EstudoScreenLembrate.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,9 +8,10 @@ import {
   TextInput,
   Modal,
   TouchableWithoutFeedback,
-} from 'react-native';
-import { Grid, Row } from 'react-native-easy-grid';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "react-native";
+import { Grid, Row } from "react-native-easy-grid";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import DatePicker from "react-native-datepicker";
 
 export default function EstudoScreenLembrate({ route, navigation }) {
   const { selectedHourValue, selectedSubjectValue } = route.params;
@@ -20,8 +20,8 @@ export default function EstudoScreenLembrate({ route, navigation }) {
   const [selectedAlarme, setSelectedAlarme] = useState(null);
   const [showAddAlarmeModal, setShowAddAlarmeModal] = useState(false);
   const [novoAlarme, setNovoAlarme] = useState({
-    horario: '',
-    competencia: Number(selectedSubjectValue) + 1, 
+    horario: "",
+    competencia: Number(selectedSubjectValue) + 1,
     quantidadeHoras: selectedHourValue,
     selectedDays: {
       Sunday: false,
@@ -38,12 +38,12 @@ export default function EstudoScreenLembrate({ route, navigation }) {
   useEffect(() => {
     const carregarDados = async () => {
       try {
-        const dadosArmazenados = await AsyncStorage.getItem('alarmesData');
+        const dadosArmazenados = await AsyncStorage.getItem("alarmesData");
         if (dadosArmazenados) {
           setAlarmesData(JSON.parse(dadosArmazenados));
         }
       } catch (error) {
-        console.error('Erro ao carregar dados:', error);
+        console.error("Erro ao carregar dados:", error);
       }
     };
 
@@ -53,9 +53,9 @@ export default function EstudoScreenLembrate({ route, navigation }) {
   useEffect(() => {
     const salvarDados = async () => {
       try {
-        await AsyncStorage.setItem('alarmesData', JSON.stringify(alarmesData));
+        await AsyncStorage.setItem("alarmesData", JSON.stringify(alarmesData));
       } catch (error) {
-        console.error('Erro ao salvar dados:', error);
+        console.error("Erro ao salvar dados:", error);
       }
     };
 
@@ -64,10 +64,17 @@ export default function EstudoScreenLembrate({ route, navigation }) {
 
   const CustomButton = ({ onPress, title, marginBottom, selected }) => (
     <TouchableOpacity
-      style={[styles.dayButton, { marginBottom, backgroundColor: selected ? '#EA86BF' : '#F5F5F5' }]}
+      style={[
+        styles.dayButton,
+        { marginBottom, backgroundColor: selected ? "#EA86BF" : "#F5F5F5" },
+      ]}
       onPress={onPress}
     >
-      <Text style={[styles.dayButtonText, { color: selected ? '#FFF' : '#000' }]}>{title}</Text>
+      <Text
+        style={[styles.dayButtonText, { color: selected ? "#FFF" : "#000" }]}
+      >
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -107,7 +114,7 @@ export default function EstudoScreenLembrate({ route, navigation }) {
   const closeAddAlarmeModal = () => {
     setShowAddAlarmeModal(false);
     setNovoAlarme({
-      horario: '',
+      horario: "",
       competencia: parseInt(selectedSubjectValue) + 1,
       quantidadeHoras: selectedHourValue,
       selectedDays: { ...novoAlarme.selectedDays },
@@ -125,7 +132,7 @@ export default function EstudoScreenLembrate({ route, navigation }) {
   };
 
   const adicionarAlarme = () => {
-    const horarioParts = novoAlarme.horario.split(':');
+    const horarioParts = novoAlarme.horario.split(":");
 
     if (
       horarioParts.length !== 2 ||
@@ -136,7 +143,7 @@ export default function EstudoScreenLembrate({ route, navigation }) {
       parseInt(horarioParts[1]) < 0 ||
       parseInt(horarioParts[1]) > 59
     ) {
-      alert('Por favor, insira um horário válido no formato HH:mm');
+      alert("Por favor, insira um horário válido no formato HH:mm");
       return;
     }
 
@@ -178,6 +185,32 @@ export default function EstudoScreenLembrate({ route, navigation }) {
         />
       </Row>
 
+      <Row style={styles.botoes} size={1}>
+        <DatePicker
+          style={{ width: 200, marginTop: 20 }}
+          date={novoAlarme.horario}
+          mode="time"
+          placeholder="Selecione o horário"
+          format="HH:mm"
+          confirmBtnText="Confirmar"
+          cancelBtnText="Cancelar"
+          customStyles={{
+            dateIcon: {
+              position: "absolute",
+              left: 0,
+              top: 4,
+              marginLeft: 0,
+            },
+            dateInput: {
+              marginLeft: 36,
+            },
+          }}
+          onDateChange={(horario) => {
+            setNovoAlarme((prevAlarme) => ({ ...prevAlarme, horario }));
+          }}
+        />
+      </Row>
+
       {showMiniDisplay && selectedAlarme && (
         <View style={styles.miniDisplay}>
           <Text style={styles.miniDisplayText}>
@@ -196,57 +229,30 @@ export default function EstudoScreenLembrate({ route, navigation }) {
       )}
 
       <Row style={styles.botoes} size={1}>
-        <TouchableWithoutFeedback onPress={openAddAlarmeModal}>
-          <View style={styles.botaoAdicionar}>
-            <Text style={styles.textoBotaoAdicionar}>Adicionar Alarme</Text>
-          </View>
-        </TouchableWithoutFeedback>
+        <DatePicker
+          style={{ width: 200, marginTop: 20 }}
+          date={novoAlarme.horario}
+          mode="time"
+          placeholder="Selecione o horário"
+          format="HH:mm"
+          confirmBtnText="Confirmar"
+          cancelBtnText="Cancelar"
+          customStyles={{
+            dateIcon: {
+              position: "absolute",
+              left: 0,
+              top: 4,
+              marginLeft: 0,
+            },
+            dateInput: {
+              marginLeft: 36,
+            },
+          }}
+          onDateChange={(horario) => {
+            setNovoAlarme((prevAlarme) => ({ ...prevAlarme, horario }));
+          }}
+        />
       </Row>
-
-      <Modal
-        visible={showAddAlarmeModal}
-        animationType="slide"
-        transparent={true}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Adicionar Novo Alarme</Text>
-            <Text style={styles.label}>Competência: {novoAlarme.competencia}</Text>
-            <Text style={styles.label}>Quantidade de Horas: {novoAlarme.quantidadeHoras}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Horário"
-              value={novoAlarme.horario}
-              onChangeText={(text) =>
-                setNovoAlarme({ ...novoAlarme, horario: text })
-              }
-            />
-            <View style={styles.daysContainer}>
-              <Text style={styles.label}>Dias da Semana:</Text>
-              <View style={styles.buttonsContainer}>
-                {Object.keys(novoAlarme.selectedDays).map((day) => (
-                  <CustomButton
-                    key={day}
-                    title={day.substring(0, 1)}
-                    onPress={() => toggleDay(day)}
-                    selected={novoAlarme.selectedDays[day]}
-                  />
-                ))}
-              </View>
-            </View>
-            <CustomButton
-              onPress={adicionarAlarme}
-              title="Adicionar"
-              marginBottom={10}
-            />
-            <CustomButton
-              onPress={closeAddAlarmeModal}
-              title="Cancelar"
-              marginBottom={0}
-            />
-          </View>
-        </View>
-      </Modal>
     </Grid>
   );
 }
@@ -254,134 +260,135 @@ export default function EstudoScreenLembrate({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E8EBEE',
-    justifyContent: 'center',
-    alignContent: 'center',
+    backgroundColor: "#E8EBEE",
+    justifyContent: "center",
+    alignItems: "center",
   },
   itemContainer: {
     borderBottomWidth: 1,
-    borderBottomColor: '#E6E9ED',
+    borderBottomColor: "#E6E9ED",
     padding: 20,
   },
   itemHorario: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#822E5E',
+    fontWeight: "bold",
+    color: "#822E5E",
   },
   botaoAdicionar: {
-    backgroundColor: '#EA86BF',
+    backgroundColor: "#EA86BF",
     borderRadius: 20,
     padding: 15,
     margin: 10,
-    alignItems: 'center',
-    marginLeft: '27.5%',
+    alignItems: "center",
+    marginLeft: "0%",
     height: 70,
-    justifyContent: 'center',
+    justifyContent: "center",
     marginTop: 30,
+    width: "45%",
   },
   textoBotaoAdicionar: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#822E5E',
+    fontWeight: "bold",
+    color: "#822E5E",
   },
   miniDisplay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(180, 180, 180, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(180, 180, 180, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   miniDisplayText: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   fecharMiniDisplay: {
     marginTop: 30,
-    color: '#822E5E',
+    color: "#822E5E",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: '#E8EBEE',
+    backgroundColor: "#E8EBEE",
     padding: 20,
     borderRadius: 10,
     elevation: 30,
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
-    color: '#822E5E',
+    color: "#822E5E",
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
   },
   itemTitulo: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2E3944',
+    fontWeight: "bold",
+    color: "#2E3944",
   },
   dayButton: {
-    backgroundColor: '#EA86BF',
+    backgroundColor: "#EA86BF",
     borderRadius: 20,
     padding: 10,
     margin: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   dayButtonText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 10,
     marginBottom: 5,
-    color: '#2E3944',
+    color: "#2E3944",
   },
   buttonsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
   },
   selectedButton: {
-    backgroundColor: '#E8EBEE',
-    color: 'white',
+    backgroundColor: "#E8EBEE",
+    color: "white",
   },
   excluirButton: {
-    backgroundColor: '#EA86BF',
+    backgroundColor: "#EA86BF",
     borderRadius: 10,
     padding: 10,
   },
   excluirButtonText: {
-    color: '#822E5E',
+    color: "#822E5E",
   },
 });
 
 function getCompetenceName(value) {
   switch (value) {
-    case '0':
-      return 'Linguagens';
-    case '1':
-      return 'Matemática';
-    case '2':
-      return 'Ciências Humanas';
-    case '3':
-      return 'Ciências da Natureza';
+    case "0":
+      return "Linguagens";
+    case "1":
+      return "Matemática";
+    case "2":
+      return "Ciências Humanas";
+    case "3":
+      return "Ciências da Natureza";
     default:
-      return '';
+      return "";
   }
 }
