@@ -6,17 +6,30 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
-  Modal,
-  TouchableWithoutFeedback,
-  ScrollView,
 } from 'react-native';
 import { Grid, Row } from 'react-native-easy-grid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Calendar } from 'react-native-calendars';
+import Modal from 'react-native-modal';
+
+const CustomButton = ({ onPress, title, marginBottom, selected }) => (
+  <TouchableOpacity
+    style={[
+      styles.dayButton,
+      { marginBottom, backgroundColor: selected ? '#EA86BF' : '#F5F5F5' },
+    ]}
+    onPress={onPress}
+  >
+    <Text style={[styles.dayButtonText, { color: selected ? '#FFF' : '#000' }]}>
+      {title}
+    </Text>
+  </TouchableOpacity>
+);
 
 export default function AlarmeScreen({ navigation }) {
-  const [showMiniDisplay, setShowMiniDisplay] = useState(false);
-  const [selectedAlarme, setSelectedAlarme] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedAlarmDetails, setSelectedAlarmDetails] = useState(null);
+
   const [showAddAlarmeModal, setShowAddAlarmeModal] = useState(false);
   const [novoAlarme, setNovoAlarme] = useState({
     horario: '',
@@ -63,42 +76,35 @@ export default function AlarmeScreen({ navigation }) {
     salvarDados();
   }, [alarmesData]);
 
-  const CustomButton = ({ onPress, title, marginBottom, selected }) => (
-    <TouchableOpacity
-      style={[styles.dayButton, { marginBottom, backgroundColor: selected ? '#EA86BF' : '#F5F5F5' }]}
-      onPress={onPress}
-    >
-      <Text style={[styles.dayButtonText, { color: selected ? '#FFF' : '#000' }]}>{title}</Text>
-    </TouchableOpacity>
-  );
-
   const renderAlarmeItem = ({ item }) => (
     <View style={styles.itemContainer}>
-      <TouchableOpacity
-        style={styles.alarmeItem}
-        onPress={() => handleAlarmePress(item)}
-      >
-        <Text style={styles.itemHorario}>{item.horario}</Text>
-        <Text style={styles.itemTitulo}>{item.titulo}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.excluirButton}
-        onPress={() => excluirAlarme(item.id)}
-      >
-        <Text style={styles.excluirButtonText}>Excluir</Text>
-      </TouchableOpacity>
+      <View style={styles.alarmeItemContainer}>
+        <TouchableOpacity
+          style={styles.alarmeItem}
+          onPress={() => handleAlarmePress(item)}
+        >
+          <Text style={styles.itemHorario}>{item.horario}</Text>
+          <Text style={styles.itemTitulo}>{item.titulo}</Text>
+        </TouchableOpacity>
+  
+        <TouchableOpacity
+          style={styles.excluirButton}
+          onPress={() => excluirAlarme(item.id)}
+        >
+          <Text style={styles.excluirButtonText}>Excluir</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
   const handleAlarmePress = (alarme) => {
-    setSelectedAlarme(alarme);
-    setShowMiniDisplay(true);
+    setSelectedAlarmDetails(alarme);
+    setShowDetailsModal(true);
   };
 
-  const closeMiniDisplay = () => {
-    setShowMiniDisplay(false);
-    setSelectedAlarme(null);
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+    setSelectedAlarmDetails(null);
   };
 
   const openAddAlarmeModal = () => {
@@ -135,7 +141,7 @@ export default function AlarmeScreen({ navigation }) {
 
   const adicionarAlarme = () => {
     const horarioParts = novoAlarme.horario.split(':');
-
+  
     if (
       horarioParts.length !== 2 ||
       isNaN(horarioParts[0]) ||
@@ -148,12 +154,17 @@ export default function AlarmeScreen({ navigation }) {
       alert('Por favor, insira um horário válido no formato HH:mm');
       return;
     }
-
-    if (chooseDaysOfWeek && !selectedDate) {
+  
+    if (chooseDaysOfWeek && !Object.values(novoAlarme.selectedDays).some(day => day)) {
+      alert('Por favor, selecione pelo menos um dia para o alarme semanal.');
+      return;
+    }
+  
+    if (!chooseDaysOfWeek && !selectedDate) {
       alert('Por favor, selecione um dia para o alarme único.');
       return;
     }
-
+  
     const novoId = String(alarmesData.length + 1);
     const novoAlarmeData = {
       id: novoId,
@@ -164,7 +175,7 @@ export default function AlarmeScreen({ navigation }) {
       selectedDate: selectedDate ? selectedDate.dateString : '',
       repeatWeekly: chooseDaysOfWeek,
     };
-
+  
     setAlarmesData([...alarmesData, novoAlarmeData]);
     closeAddAlarmeModal();
   };
@@ -184,105 +195,112 @@ export default function AlarmeScreen({ navigation }) {
         />
       </Row>
 
-      {showMiniDisplay && selectedAlarme && (
-        <View style={styles.miniDisplay}>
-          <Text style={styles.miniDisplayText}>
-            Horário: {selectedAlarme.horario}
-          </Text>
-          <Text style={styles.miniDisplayText}>
-            Título: {selectedAlarme.titulo}
-          </Text>
-          <Text style={styles.miniDisplayText}>
-            Descrição: {selectedAlarme.descricao}
-          </Text>
-          <TouchableOpacity onPress={closeMiniDisplay}>
-            <Text style={styles.fecharMiniDisplay}>Fechar</Text>
-          </TouchableOpacity>
-        </View>
+      {showDetailsModal && selectedAlarmDetails && (
+        <Modal
+          isVisible={showDetailsModal}
+          backdropOpacity={0.5}
+          onBackdropPress={closeDetailsModal}
+          style={styles.modal}
+        >
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{selectedAlarmDetails.titulo}</Text>
+            <Text style={styles.detailsText}>
+              {selectedAlarmDetails.repeatWeekly
+                ? `Repetição: ${Object.keys(selectedAlarmDetails.selectedDays).filter(day => selectedAlarmDetails.selectedDays[day]).join(', ')}`
+                : `Data: ${selectedAlarmDetails.selectedDate}, Horário: ${selectedAlarmDetails.horario}`
+              }
+            </Text>
+            <Text style={styles.detailsText}>Descrição: {selectedAlarmDetails.descricao}</Text>
+            <TouchableOpacity onPress={closeDetailsModal}>
+              <Text style={styles.fecharDetails}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       )}
 
       <Row style={styles.botoes} size={1}>
-        <TouchableWithoutFeedback onPress={openAddAlarmeModal}>
+        <TouchableOpacity onPress={openAddAlarmeModal}>
           <View style={styles.botaoAdicionar}>
             <Text style={styles.textoBotaoAdicionar}>Adicionar Alarme</Text>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </Row>
 
       <Modal
-        visible={showAddAlarmeModal}
-        animationType="slide"
-        transparent={true}
+        isVisible={showAddAlarmeModal}
+        backdropOpacity={0.5}
+        onBackdropPress={closeAddAlarmeModal}
+        style={styles.modal}
       >
-        <View style={styles.modalContainer}>
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Adicionar Novo Alarme</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Horário"
-                value={novoAlarme.horario}
-                onChangeText={(text) =>
-                  setNovoAlarme({ ...novoAlarme, horario: text })
-                }
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Título"
-                value={novoAlarme.titulo}
-                onChangeText={(text) =>
-                  setNovoAlarme({ ...novoAlarme, titulo: text })
-                }
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Descrição"
-                value={novoAlarme.descricao}
-                onChangeText={(text) =>
-                  setNovoAlarme({ ...novoAlarme, descricao: text })
-                }
-              />
-              {chooseDaysOfWeek ? (
-                <View style={styles.daysContainer}>
-                  <Text style={styles.label}>Dias da Semana:</Text>
-                  <View style={styles.buttonsContainer}>
-                    {Object.keys(novoAlarme.selectedDays).map((day) => (
-                      <CustomButton
-                        key={day}
-                        title={day.substring(0, 1)}
-                        onPress={() => toggleDay(day)}
-                        selected={novoAlarme.selectedDays[day]}
-                      />
-                    ))}
-                  </View>
-                </View>
-              ) : (
-                <View style={styles.chooseDateContainer}>
-                  <Text style={styles.label}>Escolher Data:</Text>
-                  <Calendar
-                    onDayPress={(day) => setSelectedDate(day)}
-                    markedDates={selectedDate ? { [selectedDate.dateString]: { selected: true, selectedColor: '#EA86BF' } } : {}}
-                    style={styles.calendarContainer}
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Adicionar Novo Alarme</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Horário"
+            value={novoAlarme.horario}
+            onChangeText={(text) =>
+              setNovoAlarme({ ...novoAlarme, horario: text })
+            }
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Título"
+            value={novoAlarme.titulo}
+            onChangeText={(text) =>
+              setNovoAlarme({ ...novoAlarme, titulo: text })
+            }
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Descrição"
+            value={novoAlarme.descricao}
+            onChangeText={(text) =>
+              setNovoAlarme({ ...novoAlarme, descricao: text })
+            }
+          />
+          {chooseDaysOfWeek ? (
+            <View style={styles.daysContainer}>
+              <Text style={styles.label}>Dias da Semana:</Text>
+              <View style={styles.buttonsContainer}>
+                {Object.keys(novoAlarme.selectedDays).map((day) => (
+                  <CustomButton
+                    key={day}
+                    title={day.substring(0, 1)}
+                    onPress={() => toggleDay(day)}
+                    selected={novoAlarme.selectedDays[day]}
                   />
-                </View>
-              )}
-              <TouchableOpacity onPress={() => setChooseDaysOfWeek((prev) => !prev)}>
-                <Text style={styles.toggleButtonText}>
-                  Escolher {chooseDaysOfWeek ? 'Data' : 'Dias da Semana'}
-                </Text>
-              </TouchableOpacity>
-              <CustomButton
-                onPress={adicionarAlarme}
-                title="Adicionar"
-                marginBottom={10}
-              />
-              <CustomButton
-                onPress={closeAddAlarmeModal}
-                title="Cancelar"
-                marginBottom={0}
+                ))}
+              </View>
+            </View>
+          ) : (
+            <View style={styles.chooseDateContainer}>
+              <Text style={styles.label}>Escolher Data:</Text>
+              <Calendar
+                onDayPress={(day) => setSelectedDate(day)}
+                markedDates={
+                  selectedDate
+                    ? { [selectedDate.dateString]: { selected: true, selectedColor: '#EA86BF' } }
+                    : {}
+                }
+                style={styles.calendarContainer}
               />
             </View>
-          </ScrollView>
+          )}
+          <TouchableOpacity onPress={() => setChooseDaysOfWeek((prev) => !prev)}>
+            <Text style={styles.toggleButtonText}>
+              Escolher {chooseDaysOfWeek ? 'Data' : 'Dias da Semana'}
+            </Text>
+          </TouchableOpacity>
+          <CustomButton
+            onPress={adicionarAlarme}
+            title="Adicionar"
+            marginBottom={10}
+          />
+          <CustomButton
+            onPress={closeAddAlarmeModal}
+            title="Cancelar"
+            marginBottom={0}
+          />
         </View>
       </Modal>
     </Grid>
@@ -296,10 +314,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
   },
+  alarmeItemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   itemContainer: {
     borderBottomWidth: 1,
     borderBottomColor: '#E6E9ED',
     padding: 20,
+  },
+  itemContent: {
+    flex: 1,
+  },
+  actionContainer: {
+    marginLeft: 10, // Ajuste a margem conforme necessário
+  },
+  lixeiraButton: {
+    backgroundColor: '#EA86BF',
+    borderRadius: 10,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  lixeiraButtonText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFF',
   },
   itemHorario: {
     fontSize: 18,
@@ -432,5 +473,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 7,
     marginBottom: 10,
+  },
+  detailsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  detailsTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#822E5E',
+  },
+  detailsText: {
+    fontSize: 18,
+    marginBottom: 10,
+    color: '#2E3944',
+  },
+  fecharDetails: {
+    marginTop: 30,
+    color: '#822E5E',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });

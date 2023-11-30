@@ -23,9 +23,12 @@
     "react": "18.2.0",
     "react-native": "0.72.6",
     "react-native-calendars": "^1.1302.0",
-    "react-native-datepicker": "^1.7.2",
+    "react-native-date-picker": "^4.3.3",
     "react-native-easy-grid": "^0.2.2",
     "react-native-fast-image": "^8.6.3",
+    "react-native-modal": "^13.0.1",
+    "react-native-modal-datetime-picker": "^17.1.0",
+    "react-native-sqlite-storage": "^6.0.1",
     "react-native-switch": "^1.5.1",
     "typescript": "^5.1.3"
   },
