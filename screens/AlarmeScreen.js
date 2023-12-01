@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
+  Alert,
+  ScrollView,
 } from 'react-native';
 import { Grid, Row } from 'react-native-easy-grid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -36,13 +38,13 @@ export default function AlarmeScreen({ navigation }) {
     descricao: '',
     titulo: '',
     selectedDays: {
-      Sunday: false,
-      Monday: false,
-      Tuesday: false,
-      Wednesday: false,
-      Thursday: false,
-      Friday: false,
-      Saturday: false,
+      'Domingo': false,
+      'Segunda-feira': false,
+      'Terça-feira': false,
+      'Quarta-feira': false,
+      'Quinta-feira': false,
+      'Sexta-feira': false,
+      'Sábado': false,
     },
   });
   const [selectedDate, setSelectedDate] = useState(null);
@@ -75,6 +77,79 @@ export default function AlarmeScreen({ navigation }) {
 
     salvarDados();
   }, [alarmesData]);
+  const validarDiasSemana = (novoAlarmeData) => {
+    const mesmoHorarioDiasSemana = alarmesData.find((alarme) => {
+      const diasIguais = Object.keys(alarme.selectedDays).some(
+        (day) => alarme.selectedDays[day] && novoAlarmeData.selectedDays[day]
+      );
+  
+      return (
+        alarme.horario === novoAlarmeData.horario &&
+        alarme.repeatWeekly &&
+        diasIguais
+      );
+    });
+  
+    if (mesmoHorarioDiasSemana) {
+      Alert.alert(
+        'Erro',
+        'Já existe um alarme com o mesmo horário e pelo menos um dia da semana idêntico.'
+      );
+      return false;
+    }
+  
+    return true;
+  };
+
+  const adicionarAlarme = () => {
+    const horarioParts = novoAlarme.horario.split(':');
+
+    if (
+      horarioParts.length !== 2 ||
+      isNaN(horarioParts[0]) ||
+      isNaN(horarioParts[1]) ||
+      parseInt(horarioParts[0]) < 0 ||
+      parseInt(horarioParts[0]) > 23 ||
+      parseInt(horarioParts[1]) < 0 ||
+      parseInt(horarioParts[1]) > 59
+    ) {
+      alert('Por favor, insira um horário válido no formato HH:mm');
+      return;
+    }
+
+    if (chooseDaysOfWeek && !Object.values(novoAlarme.selectedDays).some((day) => day)) {
+      alert('Por favor, selecione pelo menos um dia para o alarme semanal.');
+      return;
+    }
+
+    if (!chooseDaysOfWeek && !selectedDate) {
+      alert('Por favor, selecione um dia para o alarme único.');
+      return;
+    }
+
+    const novoId = String(alarmesData.length + 1);
+    const novoAlarmeData = {
+      id: novoId,
+      horario: novoAlarme.horario,
+      descricao: novoAlarme.descricao,
+      titulo: novoAlarme.titulo,
+      selectedDays: { ...novoAlarme.selectedDays },
+      selectedDate: selectedDate ? selectedDate.dateString : '',
+      repeatWeekly: chooseDaysOfWeek,
+    };
+
+    if (chooseDaysOfWeek && !validarDiasSemana(novoAlarmeData)) {
+      return;
+    }
+
+    setAlarmesData([...alarmesData, novoAlarmeData]);
+    closeAddAlarmeModal();
+  };
+
+  const excluirAlarme = (alarmeId) => {
+    const novosAlarmes = alarmesData.filter((alarme) => alarme.id !== alarmeId);
+    setAlarmesData(novosAlarmes);
+  };
 
   const renderAlarmeItem = ({ item }) => (
     <View style={styles.itemContainer}>
@@ -84,16 +159,20 @@ export default function AlarmeScreen({ navigation }) {
           onPress={() => handleAlarmePress(item)}
         >
           <Text style={styles.itemHorario}>{item.horario}</Text>
-          <Text style={styles.itemTitulo}>{item.titulo}</Text>
-        </TouchableOpacity>
-  
-        <TouchableOpacity
-          style={styles.excluirButton}
-          onPress={() => excluirAlarme(item.id)}
-        >
-          <Text style={styles.excluirButtonText}>Excluir</Text>
+          <Text style={styles.itemTitulo} numberOfLines={1}>
+            {item.titulo.length > 15
+              ? `${item.titulo.substring(0, 15)}...`
+              : item.titulo}
+          </Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity
+        style={styles.excluirButtonFixed}
+        onPress={() => excluirAlarme(item.id)}
+      >
+        <Text style={styles.excluirButtonText}>Excluir</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -137,52 +216,6 @@ export default function AlarmeScreen({ navigation }) {
         dateString: '',
       }));
     }
-  };
-
-  const adicionarAlarme = () => {
-    const horarioParts = novoAlarme.horario.split(':');
-  
-    if (
-      horarioParts.length !== 2 ||
-      isNaN(horarioParts[0]) ||
-      isNaN(horarioParts[1]) ||
-      parseInt(horarioParts[0]) < 0 ||
-      parseInt(horarioParts[0]) > 23 ||
-      parseInt(horarioParts[1]) < 0 ||
-      parseInt(horarioParts[1]) > 59
-    ) {
-      alert('Por favor, insira um horário válido no formato HH:mm');
-      return;
-    }
-  
-    if (chooseDaysOfWeek && !Object.values(novoAlarme.selectedDays).some(day => day)) {
-      alert('Por favor, selecione pelo menos um dia para o alarme semanal.');
-      return;
-    }
-  
-    if (!chooseDaysOfWeek && !selectedDate) {
-      alert('Por favor, selecione um dia para o alarme único.');
-      return;
-    }
-  
-    const novoId = String(alarmesData.length + 1);
-    const novoAlarmeData = {
-      id: novoId,
-      horario: novoAlarme.horario,
-      descricao: novoAlarme.descricao,
-      titulo: novoAlarme.titulo,
-      selectedDays: { ...novoAlarme.selectedDays },
-      selectedDate: selectedDate ? selectedDate.dateString : '',
-      repeatWeekly: chooseDaysOfWeek,
-    };
-  
-    setAlarmesData([...alarmesData, novoAlarmeData]);
-    closeAddAlarmeModal();
-  };
-
-  const excluirAlarme = (alarmeId) => {
-    const novosAlarmes = alarmesData.filter((alarme) => alarme.id !== alarmeId);
-    setAlarmesData(novosAlarmes);
   };
 
   return (
@@ -232,80 +265,85 @@ export default function AlarmeScreen({ navigation }) {
         onBackdropPress={closeAddAlarmeModal}
         style={styles.modal}
       >
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Adicionar Novo Alarme</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Horário"
-            value={novoAlarme.horario}
-            onChangeText={(text) =>
-              setNovoAlarme({ ...novoAlarme, horario: text })
-            }
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Título"
-            value={novoAlarme.titulo}
-            onChangeText={(text) =>
-              setNovoAlarme({ ...novoAlarme, titulo: text })
-            }
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Descrição"
-            value={novoAlarme.descricao}
-            onChangeText={(text) =>
-              setNovoAlarme({ ...novoAlarme, descricao: text })
-            }
-          />
-          {chooseDaysOfWeek ? (
-            <View style={styles.daysContainer}>
-              <Text style={styles.label}>Dias da Semana:</Text>
-              <View style={styles.buttonsContainer}>
-                {Object.keys(novoAlarme.selectedDays).map((day) => (
-                  <CustomButton
-                    key={day}
-                    title={day.substring(0, 1)}
-                    onPress={() => toggleDay(day)}
-                    selected={novoAlarme.selectedDays[day]}
-                  />
-                ))}
+        <ScrollView>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Adicionar Novo Alarme</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Horário"
+              value={novoAlarme.horario}
+              onChangeText={(text) =>
+                setNovoAlarme({ ...novoAlarme, horario: text.slice(0, 5) })
+              }
+              maxLength={5}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Título"
+              value={novoAlarme.titulo}
+              onChangeText={(text) =>
+                setNovoAlarme({ ...novoAlarme, titulo: text.slice(0, 20) })
+              }
+              maxLength={20}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Descrição"
+              value={novoAlarme.descricao}
+              onChangeText={(text) =>
+                setNovoAlarme({ ...novoAlarme, descricao: text })
+              }
+            />
+            {chooseDaysOfWeek ? (
+              <View style={styles.daysContainer}>
+                <Text style={styles.label}>Dias da Semana:</Text>
+                <View style={styles.buttonsContainer}>
+                  {Object.keys(novoAlarme.selectedDays).map((day) => (
+                    <CustomButton
+                      key={day}
+                      title={day.substring(0, 1)}
+                      onPress={() => toggleDay(day)}
+                      selected={novoAlarme.selectedDays[day]}
+                    />
+                  ))}
+                </View>
               </View>
-            </View>
-          ) : (
-            <View style={styles.chooseDateContainer}>
-              <Text style={styles.label}>Escolher Data:</Text>
-              <Calendar
-                onDayPress={(day) => setSelectedDate(day)}
-                markedDates={
-                  selectedDate
-                    ? { [selectedDate.dateString]: { selected: true, selectedColor: '#EA86BF' } }
-                    : {}
-                }
-                style={styles.calendarContainer}
-              />
-            </View>
-          )}
-          <TouchableOpacity onPress={() => setChooseDaysOfWeek((prev) => !prev)}>
-            <Text style={styles.toggleButtonText}>
-              Escolher {chooseDaysOfWeek ? 'Data' : 'Dias da Semana'}
-            </Text>
-          </TouchableOpacity>
-          <CustomButton
-            onPress={adicionarAlarme}
-            title="Adicionar"
-            marginBottom={10}
-          />
-          <CustomButton
-            onPress={closeAddAlarmeModal}
-            title="Cancelar"
-            marginBottom={0}
-          />
-        </View>
+            ) : (
+              <View style={styles.chooseDateContainer}>
+                <Text style={styles.label}>Escolher Data:</Text>
+                <Calendar
+                  onDayPress={(day) => setSelectedDate(day)}
+                  markedDates={
+                    selectedDate
+                      ? { [selectedDate.dateString]: { selected: true, selectedColor: '#EA86BF' } }
+                      : {}
+                  }
+                  style={styles.calendarContainer}
+                />
+              </View>
+            )}
+            <TouchableOpacity onPress={() => setChooseDaysOfWeek((prev) => !prev)}>
+              <Text style={styles.toggleButtonText}>
+                Escolher {chooseDaysOfWeek ? 'Data' : 'Dias da Semana'}
+              </Text>
+            </TouchableOpacity>
+            <CustomButton
+              onPress={adicionarAlarme}
+              title="Adicionar"
+              marginBottom={10}
+            />
+            <CustomButton
+              onPress={closeAddAlarmeModal}
+              title="Cancelar"
+              marginBottom={0}
+            />
+          </View>
+        </ScrollView>
       </Modal>
     </Grid>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -411,10 +449,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   itemTitulo: {
+    flex: 1,
     fontSize: 16,
     fontWeight: 'bold',
     color: '#2E3944',
   },
+
   dayButton: {
     backgroundColor: '#EA86BF',
     borderRadius: 20,
@@ -442,7 +482,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8EBEE',
     color: 'white',
   },
-  excluirButton: {
+  excluirButtonFixed: {
+    position: 'absolute',
+    right: 10, // ou a posição desejada
+    top: 25, // ou a posição desejada
     backgroundColor: '#EA86BF',
     borderRadius: 10,
     padding: 10,

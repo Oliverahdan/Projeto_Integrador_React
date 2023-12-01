@@ -28,7 +28,7 @@ export default function EstudosScreen() {
   const handleContinue = () => {
     navigation.navigate("EstudoScreenLembrate", {
       selectedHourValue,
-      selectedSubjectValue: competencias[selectedSubjectValue],
+      selectedSubjectValue,
     });
   };
 
@@ -36,7 +36,7 @@ export default function EstudosScreen() {
     <View style={styles.container}>
       <View style={styles.column}>
         <Text style={styles.title}>
-          Quantas horas por dia você irá estudar
+          Quantas horas por dia você irá estudar: {selectedHourValue} horas
         </Text>
         <Picker
           style={[styles.picker, styles.pickerBackground2]}
@@ -55,7 +55,9 @@ export default function EstudosScreen() {
       </View>
 
       <View style={styles.column}>
-        <Text style={styles.title}>Escolha uma matéria para estudar</Text>
+        <Text style={styles.title}>
+          Escolha uma matéria para estudar: {competencias[selectedSubjectValue]}
+        </Text>
         <Picker
           style={[styles.picker, styles.pickerBackground3]}
           selectedValue={selectedSubjectValue}

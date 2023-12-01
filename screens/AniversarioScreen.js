@@ -3,10 +3,9 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Button, Fla
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { Picker } from "@react-native-picker/picker";
 import { Calendar } from 'react-native-calendars';
-import SQLite from 'react-native-sqlite-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Inicializa o banco de dados SQLite
-const db = SQLite.openDatabase({ name: 'aniversarios.db', location: 'default' });
+const STORAGE_KEY = 'aniversarios';
 
 export default function AniversarioScreen() {
   const [nome, setNome] = useState('');
@@ -14,52 +13,35 @@ export default function AniversarioScreen() {
   const [isCalendarVisible, setCalendarVisible] = useState(false);
   const [intervaloNotificacao, setIntervaloNotificacao] = useState('');
   const [aniversarios, setAniversarios] = useState([]);
+  const [erroInsercao, setErroInsercao] = useState('');
 
-  // useEffect para criar a tabela quando o componente é montado
   useEffect(() => {
-    // Cria a tabela se não existir
-    db.transaction((tx) => {
-      tx.executeSql(
-        'CREATE TABLE IF NOT EXISTS aniversarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, dataNascimento TEXT, intervaloNotificacao TEXT)',
-        [],
-        () => console.log('Tabela criada com sucesso'),
-        (_, error) => console.error('Erro ao criar a tabela:', error)
-      );
-    });
-
-    // Carrega os aniversários do banco de dados quando o componente é montado
     loadAniversarios();
   }, []);
 
-  const loadAniversarios = () => {
-    // Consulta todos os aniversários na tabela
-    db.transaction((tx) => {
-      tx.executeSql(
-        'SELECT * FROM aniversarios',
-        [],
-        (_, { rows }) => {
-          const aniversariosFromDB = rows.raw();
-          setAniversarios(aniversariosFromDB);
-        },
-        (_, error) => console.error('Erro ao carregar aniversários do banco de dados:', error)
-      );
-    });
+  const loadAniversarios = async () => {
+    try {
+      const storedAniversarios = await AsyncStorage.getItem(STORAGE_KEY);
+      if (storedAniversarios) {
+        setAniversarios(JSON.parse(storedAniversarios));
+      }
+    } catch (error) {
+      console.error('Erro ao carregar aniversários do AsyncStorage:', error);
+    }
   };
 
-  const saveAniversario = () => {
-    // Insere um novo aniversário na tabela
-    db.transaction((tx) => {
-      tx.executeSql(
-        'INSERT INTO aniversarios (nome, dataNascimento, intervaloNotificacao) VALUES (?, ?, ?)',
-        [nome, dataNascimento, intervaloNotificacao],
-        () => {
-          console.log('Aniversário salvo com sucesso');
-          // Atualiza a lista de aniversários após salvar
-          loadAniversarios();
-        },
-        (_, error) => console.error('Erro ao salvar aniversário no banco de dados:', error)
-      );
-    });
+  const saveAniversario = async () => {
+    try {
+      const novoAniversario = { nome, dataNascimento, intervaloNotificacao };
+      const novosAniversarios = [...aniversarios, novoAniversario];
+
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novosAniversarios));
+      setAniversarios(novosAniversarios);
+      setErroInsercao('');
+    } catch (error) {
+      console.error('Erro ao salvar aniversário no AsyncStorage:', error);
+      setErroInsercao('Erro ao adicionar o aniversário. Por favor, tente novamente.');
+    }
   };
 
   const handleDateChange = (text) => {
@@ -189,7 +171,9 @@ export default function AniversarioScreen() {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
                   <View style={styles.aniversarioItem}>
-                    <Text>{`Nome: ${item.nome}, Data de Nascimento: ${item.dataNascimento}, Intervalo de Notificação: ${item.intervaloNotificacao}`}</Text>
+                    <Text style={styles.nome}>{`Nome: ${item.nome}`}</Text>
+                    <Text>{`Data de Nascimento: ${item.dataNascimento}`}</Text>
+                    <Text>{`Intervalo de Notificação: ${item.intervaloNotificacao}`}</Text>
                   </View>
                 )}
               />
@@ -200,7 +184,6 @@ export default function AniversarioScreen() {
     </Grid>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -279,5 +262,21 @@ const styles = StyleSheet.create({
   },
   aniversarioItem: {
     marginTop: 10,
+  },
+  excluirButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 5,
+  },
+  editarButton: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 5,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
   },
 });
