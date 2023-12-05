@@ -4,6 +4,7 @@ import { Grid, Row, Col } from 'react-native-easy-grid';
 import { Picker } from "@react-native-picker/picker";
 import { Calendar } from 'react-native-calendars';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PushNotification from 'react-native-push-notification';
 
 const STORAGE_KEY = 'aniversarios';
 
@@ -38,6 +39,20 @@ export default function AniversarioScreen() {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novosAniversarios));
       setAniversarios(novosAniversarios);
       setErroInsercao('');
+
+      // Criar canal de notificação (deve ser chamado apenas uma vez)
+      PushNotification.createChannel({
+        channelId: 'default-channel-id',
+        channelName: 'Default Channel',
+        channelDescription: 'A default channel for my app',
+      });
+
+      // Enviar notificação
+      PushNotification.localNotification({
+        channelId: 'default-channel-id', // O ID do canal de notificação (deve ser criado)
+        title: 'Novo Aniversário Adicionado!',
+        message: `Lembrete: ${nome}'s aniversário está chegando!`,
+      });
     } catch (error) {
       console.error('Erro ao salvar aniversário no AsyncStorage:', error);
       setErroInsercao('Erro ao adicionar o aniversário. Por favor, tente novamente.');
