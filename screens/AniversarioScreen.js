@@ -59,6 +59,20 @@ export default function AniversarioScreen() {
     }
   };
 
+  const handleExcluir = (index) => {
+    const novosAniversarios = [...aniversarios];
+    novosAniversarios.splice(index, 1);
+
+    // Salva a lista atualizada no AsyncStorage
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novosAniversarios))
+      .then(() => {
+        setAniversarios(novosAniversarios);
+      })
+      .catch((error) => {
+        console.error('Erro ao excluir aniversário do AsyncStorage:', error);
+      });
+  };
+
   const handleDateChange = (text) => {
     let formattedText = text;
 
@@ -184,11 +198,19 @@ export default function AniversarioScreen() {
               <FlatList
                 data={aniversarios}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                   <View style={styles.aniversarioItem}>
                     <Text style={styles.nome}>{`Nome: ${item.nome}`}</Text>
                     <Text>{`Data de Nascimento: ${item.dataNascimento}`}</Text>
                     <Text>{`Intervalo de Notificação: ${item.intervaloNotificacao}`}</Text>
+
+                    {/* Botão para excluir o aniversário */}
+                    <TouchableOpacity
+                      style={styles.excluirButton}
+                      onPress={() => handleExcluir(index)}
+                    >
+                      <Text style={styles.buttonText}>Excluir</Text>
+                    </TouchableOpacity>
                   </View>
                 )}
               />
