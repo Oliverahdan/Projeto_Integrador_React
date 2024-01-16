@@ -1,20 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Button, FlatList } from 'react-native';
-import { Grid, Row, Col } from 'react-native-easy-grid';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Button,
+  FlatList,
+} from "react-native";
+import { Grid, Row, Col } from "react-native-easy-grid";
 import { Picker } from "@react-native-picker/picker";
-import { Calendar } from 'react-native-calendars';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import PushNotification from 'react-native-push-notification';
+import { Calendar } from "react-native-calendars";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import PushNotification from "react-native-push-notification";
 
-const STORAGE_KEY = 'aniversarios';
+const STORAGE_KEY = "aniversarios";
 
 export default function AniversarioScreen() {
-  const [nome, setNome] = useState('');
-  const [dataNascimento, setDataNascimento] = useState('');
+  const [nome, setNome] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
   const [isCalendarVisible, setCalendarVisible] = useState(false);
-  const [intervaloNotificacao, setIntervaloNotificacao] = useState('');
+  const [intervaloNotificacao, setIntervaloNotificacao] = useState("");
   const [aniversarios, setAniversarios] = useState([]);
-  const [erroInsercao, setErroInsercao] = useState('');
+  const [erroInsercao, setErroInsercao] = useState("");
 
   useEffect(() => {
     loadAniversarios();
@@ -27,7 +36,7 @@ export default function AniversarioScreen() {
         setAniversarios(JSON.parse(storedAniversarios));
       }
     } catch (error) {
-      console.error('Erro ao carregar aniversários do AsyncStorage:', error);
+      console.error("Erro ao carregar aniversários do AsyncStorage:", error);
     }
   };
 
@@ -36,26 +45,31 @@ export default function AniversarioScreen() {
       const novoAniversario = { nome, dataNascimento, intervaloNotificacao };
       const novosAniversarios = [...aniversarios, novoAniversario];
 
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novosAniversarios));
+      await AsyncStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(novosAniversarios)
+      );
       setAniversarios(novosAniversarios);
-      setErroInsercao('');
+      setErroInsercao("");
 
       // Criar canal de notificação (deve ser chamado apenas uma vez)
       PushNotification.createChannel({
-        channelId: 'default-channel-id',
-        channelName: 'Default Channel',
-        channelDescription: 'A default channel for my app',
+        channelId: "default-channel-id",
+        channelName: "Default Channel",
+        channelDescription: "A default channel for my app",
       });
 
       // Enviar notificação
       PushNotification.localNotification({
-        channelId: 'default-channel-id', // O ID do canal de notificação (deve ser criado)
-        title: 'Novo Aniversário Adicionado!',
+        channelId: "default-channel-id", // O ID do canal de notificação (deve ser criado)
+        title: "Novo Aniversário Adicionado!",
         message: `Lembrete: ${nome}'s aniversário está chegando!`,
       });
     } catch (error) {
-      console.error('Erro ao salvar aniversário no AsyncStorage:', error);
-      setErroInsercao('Erro ao adicionar o aniversário. Por favor, tente novamente.');
+      console.error("Erro ao salvar aniversário no AsyncStorage:", error);
+      setErroInsercao(
+        "Erro ao adicionar o aniversário. Por favor, tente novamente."
+      );
     }
   };
 
@@ -69,7 +83,7 @@ export default function AniversarioScreen() {
         setAniversarios(novosAniversarios);
       })
       .catch((error) => {
-        console.error('Erro ao excluir aniversário do AsyncStorage:', error);
+        console.error("Erro ao excluir aniversário do AsyncStorage:", error);
       });
   };
 
@@ -77,13 +91,13 @@ export default function AniversarioScreen() {
     let formattedText = text;
 
     // Adiciona uma barra após os dois primeiros caracteres (dia)
-    if (formattedText.length === 2 && !formattedText.includes('/')) {
-      formattedText += '/';
+    if (formattedText.length === 2 && !formattedText.includes("/")) {
+      formattedText += "/";
     }
 
     // Adiciona uma barra após mais dois caracteres (mês)
-    if (formattedText.length === 5 && formattedText.charAt(4) !== '/') {
-      formattedText += '/';
+    if (formattedText.length === 5 && formattedText.charAt(4) !== "/") {
+      formattedText += "/";
     }
 
     // Limita a entrada a 10 caracteres (DD/MM/YYYY)
@@ -99,8 +113,8 @@ export default function AniversarioScreen() {
     setCalendarVisible(false);
 
     const selectedDate = new Date(date.dateString);
-    const day = selectedDate.getDate().toString().padStart(2, '0');
-    const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = selectedDate.getDate().toString().padStart(2, "0");
+    const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
     const year = selectedDate.getFullYear();
 
     const formattedDate = `${day}/${month}/${year}`;
@@ -119,9 +133,9 @@ export default function AniversarioScreen() {
     // Salva o aniversário no banco de dados
     saveAniversario();
 
-    setNome('');
-    setDataNascimento('');
-    setIntervaloNotificacao('');
+    setNome("");
+    setDataNascimento("");
+    setIntervaloNotificacao("");
   };
 
   return (
@@ -134,7 +148,7 @@ export default function AniversarioScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Digite o nome do aniversariante"
-                onChangeText={text => setNome(text)}
+                onChangeText={(text) => setNome(text)}
                 value={nome}
               />
             </View>
@@ -143,13 +157,16 @@ export default function AniversarioScreen() {
               <Text style={styles.label}>Data de Nascimento/Inicio:</Text>
               <View style={styles.dataContainer}>
                 <TouchableOpacity onPress={toggleCalendar}>
-                  <Image source={require('../assets/calendario.png')} style={styles.calendarIcon} />
+                  <Image
+                    source={require("../assets/calendario.png")}
+                    style={styles.calendarIcon}
+                  />
                 </TouchableOpacity>
                 <TextInput
                   style={styles.dateInput}
                   placeholder="DD/MM/YYYY"
                   value={dataNascimento}
-                  onChangeText={text => handleDateChange(text)}
+                  onChangeText={(text) => handleDateChange(text)}
                 />
                 {isCalendarVisible && (
                   <View style={styles.calendarContainer}>
@@ -159,15 +176,15 @@ export default function AniversarioScreen() {
                         [dataNascimento]: {
                           selected: true,
                           marked: true,
-                          selectedColor: '#EA86BF',
+                          selectedColor: "#EA86BF",
                         },
                       }}
                       theme={{
-                        calendarBackground: 'white',
-                        textSectionTitleColor: 'black',
-                        selectedDayBackgroundColor: 'blue',
-                        selectedDayTextColor: 'white',
-                        todayTextColor: 'blue',
+                        calendarBackground: "white",
+                        textSectionTitleColor: "black",
+                        selectedDayBackgroundColor: "blue",
+                        selectedDayTextColor: "white",
+                        todayTextColor: "blue",
                       }}
                     />
                   </View>
@@ -181,7 +198,8 @@ export default function AniversarioScreen() {
                 <Picker
                   style={styles.picker}
                   selectedValue={intervaloNotificacao}
-                  onValueChange={handleIntervaloNotificacaoChange}>
+                  onValueChange={handleIntervaloNotificacaoChange}
+                >
                   <Picker.Item label="Mês em Mês" value="mes" />
                   <Picker.Item label="Ano em Ano" value="ano" />
                 </Picker>
@@ -194,7 +212,9 @@ export default function AniversarioScreen() {
 
             {/* Exibir os aniversários abaixo do botão Adicionar */}
             <View style={styles.aniversarioListContainer}>
-              <Text style={styles.aniversarioListTitle}>Aniversários Marcados</Text>
+              <Text style={styles.aniversarioListTitle}>
+                Aniversários Marcados
+              </Text>
               <FlatList
                 data={aniversarios}
                 keyExtractor={(item, index) => index.toString()}
@@ -224,15 +244,15 @@ export default function AniversarioScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   col: {
     margin: 10,
   },
   inputContainer: {
     marginTop: 20,
-    width: '100%',
+    width: "100%",
   },
   label: {
     marginBottom: 5,
@@ -249,23 +269,23 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: "black",
     borderRadius: 5,
-    overflow: 'hidden',
+    overflow: "hidden",
     marginTop: 20,
-    width: '100%',
+    width: "100%",
   },
   nasciContainer: {
     marginTop: 20,
-    width: '100%',
+    width: "100%",
   },
   dataContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: "black",
     borderRadius: 5,
-    overflow: 'hidden',
+    overflow: "hidden",
     padding: 10,
   },
   calendarContainer: {
@@ -273,13 +293,13 @@ const styles = StyleSheet.create({
   },
   notiContainer: {
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: "black",
     borderRadius: 5,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   adicionar: {
     marginTop: 20,
-    width: '100%',
+    width: "100%",
   },
   dateInput: {
     flex: 1,
@@ -290,30 +310,30 @@ const styles = StyleSheet.create({
   },
   aniversarioListContainer: {
     marginTop: 20,
-    width: '100%',
+    width: "100%",
   },
   aniversarioListTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   aniversarioItem: {
     marginTop: 10,
   },
   excluirButton: {
-    backgroundColor: 'red',
+    backgroundColor: "#822E5E",
     padding: 10,
     borderRadius: 5,
     marginTop: 5,
   },
   editarButton: {
-    backgroundColor: 'blue',
+    backgroundColor: "#822E5E",
     padding: 10,
     borderRadius: 5,
     marginTop: 5,
   },
   buttonText: {
-    color: 'white',
-    textAlign: 'center',
+    color: "white",
+    textAlign: "center",
   },
 });

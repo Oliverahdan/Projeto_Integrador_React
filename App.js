@@ -1,12 +1,12 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './screens/HomeScreen';
-import AlarmeScreen from './screens/AlarmeScreen';
-import EstudosScreen from './screens/EstudosScreen';
-import AniversarioScreen from './screens/AniversarioScreen';
-import EstudoScreenLembrate from './screens/EstudoScreenLembrate';
-import ListaLembretesScreen from './screens/ListaLembretesScreen';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import HomeScreen from "./screens/HomeScreen";
+import AlarmeScreen from "./screens/AlarmeScreen";
+import EstudosScreen from "./screens/EstudosScreen";
+import AniversarioScreen from "./screens/AniversarioScreen";
+import EstudoScreenLembrate from "./screens/EstudoScreenLembrate";
+import ListaLembretesScreen from "./screens/ListaLembretesScreen";
 
 const Stack = createStackNavigator();
 
@@ -19,9 +19,9 @@ export default function App() {
           component={HomeScreen}
           options={{
             headerStyle: {
-              backgroundColor: '#FCD166',
+              backgroundColor: "#FCD166",
             },
-            headerTintColor: '#FCD166',
+            headerTintColor: "#FCD166",
             headerTitleStyle: {
               fontSize: 24,
             },
@@ -32,12 +32,12 @@ export default function App() {
           component={AniversarioScreen}
           options={{
             headerStyle: {
-              backgroundColor: '#FCD167',
+              backgroundColor: "#FCD167",
               height: 100,
             },
             headerTitleStyle: {
               fontSize: 25,
-              color: '#765A13',
+              color: "#765A13",
               marginTop: -10,
             },
             headerLeftContainerStyle: {
@@ -45,18 +45,35 @@ export default function App() {
             },
           }}
         />
-        <Stack.Screen name="Estudos" component={EstudosScreen} />
+        <Stack.Screen
+          name="Estudos"
+          component={EstudosScreen}
+          options={{
+            headerStyle: {
+              backgroundColor: "#FCD167",
+              height: 100,
+            },
+            headerTitleStyle: {
+              fontSize: 25,
+              color: "#765A13",
+              marginTop: -35,
+            },
+            headerLeftContainerStyle: {
+              marginTop: -35,
+            },
+          }}
+        />
         <Stack.Screen
           name="Alarmes"
           component={AlarmeScreen}
           options={{
             headerStyle: {
-              backgroundColor: '#FCD167',
+              backgroundColor: "#FCD167",
               height: 100,
             },
             headerTitleStyle: {
               fontSize: 25,
-              color: '#765A13',
+              color: "#765A13",
               marginTop: -35,
             },
             headerLeftContainerStyle: {
@@ -67,18 +84,32 @@ export default function App() {
         <Stack.Screen
           name="EstudoScreenLembrate"
           component={EstudoScreenLembrate}
+          options={{
+            headerStyle: {
+              backgroundColor: "#FCD167",
+              height: 100,
+            },
+            headerTitleStyle: {
+              fontSize: 25,
+              color: "#765A13",
+              marginTop: -35,
+            },
+            headerLeftContainerStyle: {
+              marginTop: -35,
+            },
+          }}
         />
         <Stack.Screen
           name="ListaLembretesScreen"
           component={ListaLembretesScreen}
           options={{
             headerStyle: {
-              backgroundColor: '#FCD167',
+              backgroundColor: "#FCD167",
               height: 100,
             },
             headerTitleStyle: {
               fontSize: 25,
-              color: '#765A13',
+              color: "#765A13",
               marginTop: -35,
             },
             headerLeftContainerStyle: {

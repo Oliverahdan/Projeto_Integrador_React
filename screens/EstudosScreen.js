@@ -58,20 +58,30 @@ export default function EstudosScreen() {
         <Text style={styles.title}>
           Escolha uma matéria para estudar: {competencias[selectedSubjectValue]}
         </Text>
-        <Picker
-          style={[styles.picker, styles.pickerBackground3]}
-          selectedValue={selectedSubjectValue}
-          onValueChange={handleSubjectPickerChange}
+        <View
+          style={{
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: "#bdc3c7",
+            overflow: "hidden",
+          }}
         >
-          {competencias.map((competencia, index) => (
-            <Picker.Item
-              key={index}
-              label={competencia}
-              value={index.toString()}
-              color="black"
-            />
-          ))}
-        </Picker>
+          <Picker
+            style={[styles.picker, styles.pickerBackground3]}
+            selectedValue={selectedSubjectValue}
+            onValueChange={handleSubjectPickerChange}
+            mode=""
+          >
+            {competencias.map((competencia, index) => (
+              <Picker.Item
+                key={index}
+                label={competencia}
+                value={index.toString()}
+                color="black"
+              />
+            ))}
+          </Picker>
+        </View>
       </View>
 
       <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
@@ -122,5 +132,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#EA86BF",
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: 20,
   },
 });
