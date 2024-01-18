@@ -39,17 +39,14 @@ export default function EstudoScreenLembrate() {
 
       console.log("Informações salvas com sucesso!");
 
-      // Definir as informações do lembrete para mostrar
       setReminderInfo({
         selectedHourValue,
         selectedSubjectValue: competencias[selectedSubjectValue],
         selectedDate,
       });
 
-      // Ativar o estado para mostrar o lembrete
       setShowMessage(true);
 
-      // Redirecionar para a tela de ListaLembretesScreen após salvar
       setTimeout(() => {
         setShowMessage(false);
         setReminderInfo(null);
@@ -97,7 +94,7 @@ export default function EstudoScreenLembrate() {
           Estudar
         </Text>
       </TouchableOpacity>
-      {/* Modal para mostrar o lembrete */}
+      {}
       <Modal
         visible={showMessage}
         animationType="slide"

@@ -7,13 +7,12 @@ import {
   StyleSheet,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Certifique-se de instalar a biblioteca de ícones se ainda não estiver instalada
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 export default function ListaLembretesScreen({ navigation }) {
   const [lembretes, setLembretes] = useState([]);
 
   useEffect(() => {
-    // Carregar os lembretes salvos ao abrir a tela
     const carregarLembretes = async () => {
       try {
         const existingData = (await AsyncStorage.getItem("estudos")) || "[]";
@@ -28,7 +27,6 @@ export default function ListaLembretesScreen({ navigation }) {
   }, []);
 
   const handleExcluirLembrete = async (index) => {
-    // Remover o lembrete do AsyncStorage
     const novosLembretes = [...lembretes];
     novosLembretes.splice(index, 1);
 
@@ -42,9 +40,7 @@ export default function ListaLembretesScreen({ navigation }) {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text style={{ fontSize: 24, marginBottom: 16 }}>
-        Lista de Lembretes de Estudos
-      </Text>
+      <Text style={{ fontSize: 24, marginBottom: 16 }}>Meus Lembretes:</Text>
 
       {lembretes.length > 0 ? (
         <FlatList
@@ -53,7 +49,7 @@ export default function ListaLembretesScreen({ navigation }) {
           renderItem={({ item, index }) => (
             <View style={styles.lembreteItem}>
               <Text>{`Estudar ${item.selectedHourValue} horas de ${item.selectedSubjectValue} no dia ${item.selectedDate}`}</Text>
-              {/* Botão de Exclusão */}
+              {}
               <TouchableOpacity
                 style={styles.excluirButton}
                 onPress={() => handleExcluirLembrete(index)}
@@ -67,7 +63,7 @@ export default function ListaLembretesScreen({ navigation }) {
         <Text>Nenhum lembrete de estudo encontrado.</Text>
       )}
 
-      {/* Botão para voltar à tela anterior */}
+      {}
       <TouchableOpacity
         style={{
           marginTop: 20,
