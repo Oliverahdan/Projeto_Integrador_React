@@ -55,7 +55,6 @@ export default function EstudoScreenLembrate() {
         setReminderInfo(null);
         navigation.navigate("ListaLembretesScreen");
       }, 3000);
-
     } catch (error) {
       console.error("Erro ao salvar informações:", error);
     }
@@ -64,7 +63,8 @@ export default function EstudoScreenLembrate() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text style={{ fontSize: 18, marginBottom: 16 }}>
-        Você irá estudar {selectedHourValue} horas de {competencias[selectedSubjectValue]} no dia:
+        Você irá estudar {selectedHourValue} horas de{" "}
+        {competencias[selectedSubjectValue]} no dia:
       </Text>
 
       {selectedDate && (
@@ -83,14 +83,20 @@ export default function EstudoScreenLembrate() {
           backgroundColor: "#EA86BF",
           justifyContent: "center",
           alignItems: "center",
+          borderRadius: 10,
         }}
         onPress={handleSave}
       >
-        <Text style={{ fontSize: 18, fontWeight: "bold", color: "#822E5E" }}>
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: "bold",
+            color: "#822E5E",
+          }}
+        >
           Estudar
         </Text>
       </TouchableOpacity>
-
       {/* Modal para mostrar o lembrete */}
       <Modal
         visible={showMessage}
@@ -101,8 +107,9 @@ export default function EstudoScreenLembrate() {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={{ fontSize: 18, marginBottom: 16 }}>
-              Lembrete: Você deverá estudar {reminderInfo?.selectedHourValue} horas de{" "}
-              {reminderInfo?.selectedSubjectValue} no dia {reminderInfo?.selectedDate}.
+              Lembrete: Você deverá estudar {reminderInfo?.selectedHourValue}{" "}
+              horas de {reminderInfo?.selectedSubjectValue} no dia{" "}
+              {reminderInfo?.selectedDate}.
             </Text>
             <TouchableOpacity
               style={{
@@ -112,10 +119,13 @@ export default function EstudoScreenLembrate() {
                 backgroundColor: "#EA86BF",
                 justifyContent: "center",
                 alignItems: "center",
+                borderRadius: 10,
               }}
               onPress={() => setShowMessage(false)}
             >
-              <Text style={{ fontSize: 18, fontWeight: "bold", color: "#822E5E" }}>
+              <Text
+                style={{ fontSize: 18, fontWeight: "bold", color: "#822E5E" }}
+              >
                 Fechar
               </Text>
             </TouchableOpacity>

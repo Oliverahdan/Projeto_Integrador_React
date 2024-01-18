@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ListaLembretesScreen({ navigation }) {
@@ -22,7 +28,9 @@ export default function ListaLembretesScreen({ navigation }) {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text style={{ fontSize: 24, marginBottom: 16 }}>Lista de Lembretes de Estudos</Text>
+      <Text style={{ fontSize: 24, marginBottom: 16 }}>
+        Lista de Lembretes de Estudos
+      </Text>
 
       {lembretes.length > 0 ? (
         <FlatList
@@ -47,6 +55,7 @@ export default function ListaLembretesScreen({ navigation }) {
           backgroundColor: "#EA86BF",
           justifyContent: "center",
           alignItems: "center",
+          borderRadius: 10,
         }}
         onPress={() => navigation.goBack()}
       >
