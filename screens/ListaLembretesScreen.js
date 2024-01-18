@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/MaterialIcons"; // Certifique-se de instalar a biblioteca de ícones se ainda não estiver instalada
 
 export default function ListaLembretesScreen({ navigation }) {
   const [lembretes, setLembretes] = useState([]);
@@ -26,6 +27,19 @@ export default function ListaLembretesScreen({ navigation }) {
     carregarLembretes();
   }, []);
 
+  const handleExcluirLembrete = async (index) => {
+    // Remover o lembrete do AsyncStorage
+    const novosLembretes = [...lembretes];
+    novosLembretes.splice(index, 1);
+
+    try {
+      await AsyncStorage.setItem("estudos", JSON.stringify(novosLembretes));
+      setLembretes(novosLembretes);
+    } catch (error) {
+      console.error("Erro ao excluir lembrete:", error);
+    }
+  };
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text style={{ fontSize: 24, marginBottom: 16 }}>
@@ -36,9 +50,16 @@ export default function ListaLembretesScreen({ navigation }) {
         <FlatList
           data={lembretes}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <View style={styles.lembreteItem}>
               <Text>{`Estudar ${item.selectedHourValue} horas de ${item.selectedSubjectValue} no dia ${item.selectedDate}`}</Text>
+              {/* Botão de Exclusão */}
+              <TouchableOpacity
+                style={styles.excluirButton}
+                onPress={() => handleExcluirLembrete(index)}
+              >
+                <Icon name="delete" size={24} color="#FFF" />
+              </TouchableOpacity>
             </View>
           )}
         />
@@ -73,5 +94,13 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#F0F0F0",
     borderRadius: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  excluirButton: {
+    backgroundColor: "#EA86BF",
+    borderRadius: 5,
+    padding: 5,
   },
 });
