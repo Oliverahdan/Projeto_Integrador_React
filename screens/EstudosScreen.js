@@ -38,20 +38,29 @@ export default function EstudosScreen() {
         <Text style={styles.title}>
           Quantas horas por dia você irá estudar: {selectedHourValue} horas
         </Text>
-        <Picker
-          style={[styles.picker, styles.pickerBackground2]}
-          selectedValue={selectedHourValue}
-          onValueChange={handleHourPickerChange}
+        <View
+          style={{
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: "#bdc3c7",
+            overflow: "hidden",
+          }}
         >
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((hour, index) => (
-            <Picker.Item
-              key={index}
-              label={hour.toString()}
-              value={hour.toString()}
-              color="black"
-            />
-          ))}
-        </Picker>
+          <Picker
+            style={[styles.picker, styles.pickerBackground2]}
+            selectedValue={selectedHourValue}
+            onValueChange={handleHourPickerChange}
+          >
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((hour, index) => (
+              <Picker.Item
+                key={index}
+                label={hour.toString()}
+                value={hour.toString()}
+                color="black"
+              />
+            ))}
+          </Picker>
+        </View>
       </View>
 
       <View style={styles.column}>

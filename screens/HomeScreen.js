@@ -12,9 +12,9 @@ export default function HomeScreen({ navigation }) {
         />
       </Row>
 
-      {}
+      {/* Corpo da página */}
       <Row style={styles.botoes} size={1}>
-        {}
+        {/* Retângulo rosa 1 */}
         <TouchableOpacity
           onPress={() => navigation.navigate("Estudos")}
           style={styles.botao}
@@ -29,7 +29,7 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </Row>
       <Row style={styles.botoes} size={1}>
-        {}
+        {/* Retângulo rosa 2 */}
         <TouchableOpacity
           onPress={() => navigation.navigate("Alarmes")}
           style={styles.botao}
@@ -44,7 +44,7 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </Row>
       <Row style={styles.botoes} size={1}>
-        {}
+        {/* Retângulo rosa 3 */}
         <TouchableOpacity
           onPress={() => navigation.navigate("Aniversários")}
           style={styles.botao}
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FCD166",
     justifyContent: "center",
-    alignContent: "center",
+    alignContent: "center", // Center horizontally
   },
   background: {
     width: 300,
@@ -105,8 +105,8 @@ const styles = StyleSheet.create({
     textAlign: "right",
     textAlignVertical: "center",
     fontSize: 35,
-    borderWidth: 2,
-    borderColor: "black",
+    borderWidth: 2, // Largura da borda
+    borderColor: "black", // Cor da borda
   },
   botao: {
     display: "flex",
