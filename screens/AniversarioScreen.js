@@ -154,10 +154,7 @@ export default function AniversarioScreen() {
   return (
     <Grid style={styles.container}>
       <Col>
-        <Row>
-          <Col style={styles.col}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Nome:</Text>
+            <View style={styles.nameContainer}>
               <TextInput
                 style={styles.input}
                 placeholder="Digite o nome do aniversariante"
@@ -167,7 +164,6 @@ export default function AniversarioScreen() {
             </View>
 
             <View style={styles.nasciContainer}>
-              <Text style={styles.label}>Data de Nascimento/Inicio:</Text>
               <View style={styles.dataContainer}>
                 <TouchableOpacity onPress={toggleCalendar}>
                   <Image
@@ -177,7 +173,7 @@ export default function AniversarioScreen() {
                 </TouchableOpacity>
                 <TextInput
                   style={styles.dateInput}
-                  placeholder="DD/MM/YYYY"
+                  placeholder="Digite a data ou clique no calendario"
                   value={dataNascimento}
                   onChangeText={(text) => handleDateChange(text)}
                 />
@@ -205,8 +201,7 @@ export default function AniversarioScreen() {
               </View>
             </View>
 
-            <View style={styles.nasciContainer}>
-              <Text style={styles.label}>Intervalo de Notificação:</Text>
+            <View style={styles.interContainer}>
               <View style={styles.notiContainer}>
                 <Picker
                   style={styles.picker}
@@ -248,8 +243,6 @@ export default function AniversarioScreen() {
                 )}
               />
             </View>
-          </Col>
-        </Row>
       </Col>
     </Grid>
   );
@@ -260,12 +253,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  col: {
-    margin: 10,
-  },
-  inputContainer: {
+  nameContainer: {
     marginTop: 20,
-    width: "100%",
+    alignItems: "center",
   },
   label: {
     marginBottom: 5,
@@ -290,7 +280,7 @@ const styles = StyleSheet.create({
   },
   nasciContainer: {
     marginTop: 20,
-    width: "100%",
+    alignItems: "center",
   },
   dataContainer: {
     flexDirection: "row",
@@ -300,15 +290,18 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     overflow: "hidden",
     padding: 10,
+    width: 220,
   },
   calendarContainer: {
     padding: 10,
   },
+  //intervalo
+  interContainer:{
+    alignItems: "center",
+  },
   notiContainer: {
     borderWidth: 1,
-    borderColor: "black",
     borderRadius: 5,
-    overflow: "hidden",
   },
   adicionar: {
     marginTop: 20,
