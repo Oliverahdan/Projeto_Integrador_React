@@ -13,7 +13,7 @@ import { Grid, Row, Col } from "react-native-easy-grid";
 import { Picker } from "@react-native-picker/picker";
 import { Calendar } from "react-native-calendars";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import PushNotification from "react-native-push-notification";
+import * as Notifications from 'expo-notifications';
 
 const STORAGE_KEY = "aniversarios";
 
@@ -27,6 +27,7 @@ export default function AniversarioScreen() {
 
   useEffect(() => {
     loadAniversarios();
+    registerForPushNotificationsAsync();
   }, []);
 
   const loadAniversarios = async () => {
@@ -44,27 +45,15 @@ export default function AniversarioScreen() {
     try {
       const novoAniversario = { nome, dataNascimento, intervaloNotificacao };
       const novosAniversarios = [...aniversarios, novoAniversario];
-
+  
       await AsyncStorage.setItem(
         STORAGE_KEY,
         JSON.stringify(novosAniversarios)
       );
       setAniversarios(novosAniversarios);
       setErroInsercao("");
-
-      // Criar canal de notificação (deve ser chamado apenas uma vez)
-      PushNotification.createChannel({
-        channelId: "default-channel-id",
-        channelName: "Default Channel",
-        channelDescription: "A default channel for my app",
-      });
-
-      // Enviar notificação
-      PushNotification.localNotification({
-        channelId: "default-channel-id", // O ID do canal de notificação (deve ser criado)
-        title: "Novo Aniversário Adicionado!",
-        message: `Lembrete: ${nome}'s aniversário está chegando!`,
-      });
+  
+      sendPushNotification(`Lembrete: ${nome}'s aniversário está chegando!`);
     } catch (error) {
       console.error("Erro ao salvar aniversário no AsyncStorage:", error);
       setErroInsercao(
@@ -72,12 +61,41 @@ export default function AniversarioScreen() {
       );
     }
   };
+  
+  const registerForPushNotificationsAsync = async () => {
+    try {
+      const { status } = await Notifications.getPermissionsAsync();
+      console.log('Status de permissões:', status);
+  
+      if (status !== 'granted') {
+        const { status: askStatus } = await Notifications.requestPermissionsAsync();
+        console.log('Status de permissões após a solicitação:', askStatus);
+  
+        if (askStatus !== 'granted') {
+          console.log('Permissão de notificação não concedida');
+          return;
+        }
+      }
+  
+      const deviceToken = (await Notifications.getDevicePushTokenAsync()).data;
+      console.log('Device Token:', deviceToken);
+    } catch (error) {
+      console.error('Erro ao obter o token do dispositivo:', error);
+    }
+  };
+  
+  const sendPushNotification = async (message) => {
+    await Notifications.presentNotificationAsync({
+      title: "Novo Aniversário Adicionado!",
+      body: message,
+    });
+  };
+  
 
   const handleExcluir = (index) => {
     const novosAniversarios = [...aniversarios];
     novosAniversarios.splice(index, 1);
 
-    // Salva a lista atualizada no AsyncStorage
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novosAniversarios))
       .then(() => {
         setAniversarios(novosAniversarios);
@@ -90,22 +108,18 @@ export default function AniversarioScreen() {
   const handleDateChange = (text) => {
     let formattedText = text;
 
-    // Adiciona uma barra após os dois primeiros caracteres (dia)
     if (formattedText.length === 2 && !formattedText.includes("/")) {
       formattedText += "/";
     }
 
-    // Adiciona uma barra após mais dois caracteres (mês)
     if (formattedText.length === 5 && formattedText.charAt(4) !== "/") {
       formattedText += "/";
     }
 
-    // Limita a entrada a 10 caracteres (DD/MM/YYYY)
     if (formattedText.length > 10) {
       formattedText = formattedText.slice(0, 10);
     }
 
-    // Atualiza o estado da data de nascimento
     setDataNascimento(formattedText);
   };
 
@@ -130,7 +144,6 @@ export default function AniversarioScreen() {
   };
 
   const handleAdicionar = () => {
-    // Salva o aniversário no banco de dados
     saveAniversario();
 
     setNome("");
