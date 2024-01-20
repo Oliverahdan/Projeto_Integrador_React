@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image,
   Button,
-  FlatList,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Grid, Row, Col } from "react-native-easy-grid";
 import { Picker } from "@react-native-picker/picker";
@@ -45,14 +45,14 @@ export default function AniversarioScreen() {
     try {
       const novoAniversario = { nome, dataNascimento, intervaloNotificacao };
       const novosAniversarios = [...aniversarios, novoAniversario];
-  
+
       await AsyncStorage.setItem(
         STORAGE_KEY,
         JSON.stringify(novosAniversarios)
       );
       setAniversarios(novosAniversarios);
       setErroInsercao("");
-  
+
       sendPushNotification(`Lembrete: ${nome}'s aniversário está chegando!`);
     } catch (error) {
       console.error("Erro ao salvar aniversário no AsyncStorage:", error);
@@ -61,48 +61,34 @@ export default function AniversarioScreen() {
       );
     }
   };
-  
+
   const registerForPushNotificationsAsync = async () => {
     try {
       const { status } = await Notifications.getPermissionsAsync();
       console.log('Status de permissões:', status);
-  
+
       if (status !== 'granted') {
         const { status: askStatus } = await Notifications.requestPermissionsAsync();
         console.log('Status de permissões após a solicitação:', askStatus);
-  
+
         if (askStatus !== 'granted') {
           console.log('Permissão de notificação não concedida');
           return;
         }
       }
-  
+
       const deviceToken = (await Notifications.getDevicePushTokenAsync()).data;
       console.log('Device Token:', deviceToken);
     } catch (error) {
       console.error('Erro ao obter o token do dispositivo:', error);
     }
   };
-  
+
   const sendPushNotification = async (message) => {
     await Notifications.presentNotificationAsync({
       title: "Novo Aniversário Adicionado!",
       body: message,
     });
-  };
-  
-
-  const handleExcluir = (index) => {
-    const novosAniversarios = [...aniversarios];
-    novosAniversarios.splice(index, 1);
-
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novosAniversarios))
-      .then(() => {
-        setAniversarios(novosAniversarios);
-      })
-      .catch((error) => {
-        console.error("Erro ao excluir aniversário do AsyncStorage:", error);
-      });
   };
 
   const handleDateChange = (text) => {
@@ -144,6 +130,12 @@ export default function AniversarioScreen() {
   };
 
   const handleAdicionar = () => {
+    if (!nome.trim() || !dataNascimento.trim()) {
+      // Verifica se os campos não estão vazios
+      setErroInsercao("Preencha todos os campos antes de adicionar.");
+      return;
+    }
+  
     saveAniversario();
 
     setNome("");
@@ -151,103 +143,104 @@ export default function AniversarioScreen() {
     setIntervaloNotificacao("");
   };
 
+  const closeCalendar = () => {
+    setCalendarVisible(false);
+  };
+
   return (
-    <Grid style={styles.container}>
-      <Col>
+    <TouchableWithoutFeedback onPress={closeCalendar}>
+      <Grid style={styles.container}>
+        <Col style={{ flex: 1 }}>
+          <Row style={[styles.titulo, { justifyContent: "center", alignItems: "center", flexDirection: "column" }]}>
+            <Text style={styles.titulotext}>Marque um Aniversário</Text>
+            <Text style={styles.subtitulotext}>Veja os seus aniversários no icone de menu acima.</Text>
+          </Row>
+
+          <Row style={[styles.rowContainer, { alignItems: 'center' }]}>
             <View style={styles.nameContainer}>
-              <TextInput
-                style={styles.input}
+              <TextInput style={styles.input}
                 placeholder="Digite o nome do aniversariante"
                 onChangeText={(text) => setNome(text)}
                 value={nome}
               />
             </View>
+          </Row>
 
-            <View style={styles.nasciContainer}>
+          <Row style={styles.rowContainer}>
+          <View style={styles.nasciContainer}>
+              <TouchableOpacity onPress={toggleCalendar} style={styles.calendarIconContainer}>
+                <Image
+                  source={require("../assets/calendario.png")}
+                  style={styles.calendarIcon}
+                />
+              </TouchableOpacity>
               <View style={styles.dataContainer}>
-                <TouchableOpacity onPress={toggleCalendar}>
-                  <Image
-                    source={require("../assets/calendario.png")}
-                    style={styles.calendarIcon}
-                  />
-                </TouchableOpacity>
                 <TextInput
                   style={styles.dateInput}
-                  placeholder="Digite a data ou clique no calendario"
+                  placeholder="Digite a data"
                   value={dataNascimento}
                   onChangeText={(text) => handleDateChange(text)}
+                  keyboardType="numeric"
                 />
-                {isCalendarVisible && (
-                  <View style={styles.calendarContainer}>
-                    <Calendar
-                      onDayPress={handleDateSelect}
-                      markedDates={{
-                        [dataNascimento]: {
-                          selected: true,
-                          marked: true,
-                          selectedColor: "#EA86BF",
-                        },
-                      }}
-                      theme={{
-                        calendarBackground: "white",
-                        textSectionTitleColor: "black",
-                        selectedDayBackgroundColor: "blue",
-                        selectedDayTextColor: "white",
-                        todayTextColor: "blue",
-                      }}
-                    />
-                  </View>
-                )}
               </View>
+              {isCalendarVisible && (
+                <View style={styles.calendarContainer}>
+                  <Calendar
+                    onDayPress={handleDateSelect}
+                    markedDates={{
+                      [dataNascimento]: {
+                        selected: true,
+                        marked: true,
+                        selectedColor: "#EA86BF",
+                      },
+                    }}
+                    theme={{
+                      calendarBackground: "white",
+                      textSectionTitleColor: "black",
+                      selectedDayBackgroundColor: "blue",
+                      selectedDayTextColor: "white",
+                      todayTextColor: "blue",
+                    }}
+                  />
+                </View>
+              )}
             </View>
+          </Row>
 
-            <View style={styles.interContainer}>
-              <View style={styles.notiContainer}>
-                <Picker
-                  style={styles.picker}
-                  selectedValue={intervaloNotificacao}
-                  onValueChange={handleIntervaloNotificacaoChange}
-                >
-                  <Picker.Item label="Mês em Mês" value="mes" />
-                  <Picker.Item label="Ano em Ano" value="ano" />
-                </Picker>
-              </View>
+          <Row style={styles.rowContainer}>
+            <View style={styles.notiContainer}>
+              <Picker
+                style={styles.picker}
+                selectedValue={intervaloNotificacao}
+                onValueChange={handleIntervaloNotificacaoChange}
+              >
+                <Picker.Item label="Mês em Mês" value="mes" />
+                <Picker.Item label="Ano em Ano" value="ano" />
+              </Picker>
             </View>
+          </Row>
 
-            <View style={styles.adicionar}>
-              <Button title="Adicionar" onPress={handleAdicionar} />
-            </View>
+          <Row style={styles.rowContainer}>
+            <TouchableOpacity onPress={handleAdicionar}>
+          <View style={styles.botaoAdicionar}>
+            <Text style={styles.textoBotaoAdicionar}>Adicionar</Text>
+          </View>
+        </TouchableOpacity>
+          </Row>
 
-            {/* Exibir os aniversários abaixo do botão Adicionar */}
-            <View style={styles.aniversarioListContainer}>
-              <Text style={styles.aniversarioListTitle}>
-                Aniversários Marcados
-              </Text>
-              <FlatList
-                data={aniversarios}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                  <View style={styles.aniversarioItem}>
-                    <Text style={styles.nome}>{`Nome: ${item.nome}`}</Text>
-                    <Text>{`Data de Nascimento: ${item.dataNascimento}`}</Text>
-                    <Text>{`Intervalo de Notificação: ${item.intervaloNotificacao}`}</Text>
-
-                    {/* Botão para excluir o aniversário */}
-                    <TouchableOpacity
-                      style={styles.excluirButton}
-                      onPress={() => handleExcluir(index)}
-                    >
-                      <Text style={styles.buttonText}>Excluir</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              />
-            </View>
-      </Col>
-    </Grid>
+        </Col>
+      </Grid>
+    </TouchableWithoutFeedback>
   );
 }
+
 const styles = StyleSheet.create({
+  titulotext:{
+    fontSize: 25,
+  },
+  titulo: {
+    textAlign: "center",
+  },
   container: {
     flex: 1,
     justifyContent: "center",
@@ -257,89 +250,90 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: "center",
   },
-  label: {
-    marginBottom: 5,
+  rowContainer: {
+    justifyContent: 'center',
+    flex: 1,
   },
   input: {
-    height: 40,
-    borderWidth: 1,
+    height: 60,
+    borderWidth: 2,
     borderRadius: 5,
     paddingHorizontal: 10,
+    borderColor: '#CDD0D4',
+    width: 220,
   },
   calendarIcon: {
-    width: 24,
-    height: 24,
+    width: 40,
+    height: 40,
+    marginTop: -40,
   },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: "black",
-    borderRadius: 5,
-    overflow: "hidden",
-    marginTop: 20,
-    width: "100%",
+  calendarIconContainer: {
+    position: 'absolute',
+    right: 10,
+    zIndex: 2, // Um valor maior do que o do dataContainer
   },
   nasciContainer: {
     marginTop: 20,
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   dataContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "black",
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#CDD0D4',
     borderRadius: 5,
-    overflow: "hidden",
+    overflow: 'hidden',
     padding: 10,
     width: 220,
+    height: 60,
+    position: 'relative',
+    marginTop: -40,
+    zIndex: 1, // Adiciona um índice de sobreposição
   },
   calendarContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    marginTop: 10,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: '#CDD0D4',
     padding: 10,
+    zIndex: 3, // Adiciona um índice de sobreposição
   },
-  //intervalo
-  interContainer:{
+  interContainer: {
     alignItems: "center",
   },
   notiContainer: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 5,
+    width: 220,
+    height: 60,
+    justifyContent: 'center',
+    borderColor: '#CDD0D4', // Adicionado para centralizar o conteúdo na vertical
   },
   adicionar: {
     marginTop: 20,
-    width: "100%",
+    width: 200,
   },
   dateInput: {
     flex: 1,
     marginLeft: 10,
   },
-  selectedDate: {
-    marginTop: 10,
+  botaoAdicionar: {
+    backgroundColor: '#EA86BF',
+    borderRadius: 20,
+    alignItems: 'center',
+    height: 70,
+    justifyContent: 'center',
+    width: 200,
+    marginTop: -30,
   },
-  aniversarioListContainer: {
-    marginTop: 20,
-    width: "100%",
-  },
-  aniversarioListTitle: {
+  textoBotaoAdicionar: {
     fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  aniversarioItem: {
-    marginTop: 10,
-  },
-  excluirButton: {
-    backgroundColor: "#822E5E",
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 5,
-  },
-  editarButton: {
-    backgroundColor: "#822E5E",
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 5,
-  },
-  buttonText: {
-    color: "white",
-    textAlign: "center",
+    fontWeight: 'bold',
+    color: '#822E5E',
   },
 });

@@ -5,59 +5,58 @@ import { Grid, Row, Col } from "react-native-easy-grid";
 export default function HomeScreen({ navigation }) {
   return (
     <Grid style={styles.container}>
-      <Row size={4} style={styles.botoes}>
+      <Col>
+
+      <View style={styles.botoes}>
         <Image
           source={require("../../Projeto_Integrador_React/assets/1.png")}
           style={styles.background}
         />
-      </Row>
+      </View>
 
       {/* Corpo da página */}
-      <Row style={styles.botoes} size={1}>
+      <Row style={styles.botao} >
         {/* Retângulo rosa 1 */}
         <TouchableOpacity
           onPress={() => navigation.navigate("Estudos")}
-          style={styles.botao}
+          style={styles.retangulo}
         >
-          <View style={styles.retangulo}>
             <Image
               source={require("../../Projeto_Integrador_React/assets/estudos.png")}
               style={styles.image}
             />
             <Text style={styles.estudos}>Estudos</Text>
-          </View>
         </TouchableOpacity>
       </Row>
-      <Row style={styles.botoes} size={1}>
+      <Row style={styles.botao} size={1}>
         {/* Retângulo rosa 2 */}
         <TouchableOpacity
           onPress={() => navigation.navigate("Alarmes")}
-          style={styles.botao}
+          style={styles.retangulo}
         >
-          <View style={styles.retangulo}>
             <Image
               source={require("../../Projeto_Integrador_React/assets/alarmes.png")}
               style={styles.image}
             />
             <Text style={styles.alarmes}>Alarmes</Text>
-          </View>
         </TouchableOpacity>
       </Row>
-      <Row style={styles.botoes} size={1}>
+      <Row style={styles.botao}>
         {/* Retângulo rosa 3 */}
+        <View style={styles.center}>
         <TouchableOpacity
           onPress={() => navigation.navigate("Aniversários")}
-          style={styles.botao}
+          style={styles.retangulo}
         >
-          <View style={styles.retangulo}>
             <Image
               source={require("../../Projeto_Integrador_React/assets/aniversario.png")}
               style={styles.image}
             />
             <Text style={styles.aniversario}>Aniversários</Text>
-          </View>
         </TouchableOpacity>
+        </View>
       </Row>
+      </Col>
     </Grid>
   );
 }
@@ -72,7 +71,10 @@ const styles = StyleSheet.create({
   background: {
     width: 300,
     height: 400,
-    marginLeft: "10%",
+    alignItems: "center",
+  },
+  botoes:{
+    alignItems: "center",
   },
   estudos: {
     textAlignVertical: "center",
@@ -100,13 +102,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 70,
     width: 260,
-    backgroundColor: "#E6E9ED",
+    backgroundColor: "white",
     borderRadius: 20,
     textAlign: "right",
     textAlignVertical: "center",
     fontSize: 35,
-    borderWidth: 2, // Largura da borda
-    borderColor: "black", // Cor da borda
+    elevation: 10,
+    marginTop: -30,
+   
   },
   botao: {
     display: "flex",

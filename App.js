@@ -7,6 +7,9 @@ import EstudosScreen from "./screens/EstudosScreen";
 import AniversarioScreen from "./screens/AniversarioScreen";
 import EstudoScreenLembrate from "./screens/EstudoScreenLembrate";
 import ListaLembretesScreen from "./screens/ListaLembretesScreen";
+import ListaAniversariosScreen from "./screens/ListaAniversariosScreen";
+import { TouchableOpacity, Image} from "react-native";
+
 
 const Stack = createStackNavigator();
 
@@ -19,32 +22,63 @@ export default function App() {
           component={HomeScreen}
           options={{
             headerStyle: {
-              backgroundColor: "#FCD166",
+              backgroundColor: "#D2AF55",
+              height: 35,
             },
             headerTintColor: "#FCD166",
             headerTitleStyle: {
-              fontSize: 24,
+              fontSize: 10,
             },
+
           }}
         />
         <Stack.Screen
           name="Aniversários"
           component={AniversarioScreen}
-          options={{
+          options={({ navigation }) => ({
             headerStyle: {
               backgroundColor: "#FCD167",
               height: 100,
             },
             headerTitleStyle: {
               fontSize: 25,
-              color: "#765A13",
+              color: "black",
               marginTop: -10,
             },
             headerLeftContainerStyle: {
               marginTop: -10,
             },
-          }}
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ListaAniversarios')}
+                style={{ marginRight: 15 }}
+              >
+               <Image
+                source={require("../Projeto_Integrador_React/assets/menu.png")}
+              />
+              </TouchableOpacity>
+            ),
+          })}
         />
+        <Stack.Screen
+        name="ListaAniversarios"
+        component={ListaAniversariosScreen}
+        options={{
+          headerStyle: {
+            backgroundColor: "#EA86BF",
+            height: 100,
+          },
+          headerTitleStyle: {
+            fontSize: 25,
+            color: "black",
+            marginTop: -10,
+          },
+          headerLeftContainerStyle: {
+            marginTop: -10,
+          },
+        }}
+      />
+
         <Stack.Screen
           name="Estudos"
           component={EstudosScreen}
@@ -56,10 +90,9 @@ export default function App() {
             headerTitleStyle: {
               fontSize: 25,
               color: "#765A13",
-              marginTop: -35,
             },
             headerLeftContainerStyle: {
-              marginTop: -35,
+              marginTop: 0,
             },
           }}
         />
