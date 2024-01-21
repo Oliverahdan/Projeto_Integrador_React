@@ -9,6 +9,7 @@ import EstudoScreenLembrate from "./screens/EstudoScreenLembrate";
 import ListaLembretesScreen from "./screens/ListaLembretesScreen";
 import ListaAniversariosScreen from "./screens/ListaAniversariosScreen";
 import { TouchableOpacity, Image} from "react-native";
+import EditarAniversarioModal from "./screens/EditarAniversarioModal";
 
 
 const Stack = createStackNavigator();
@@ -78,7 +79,24 @@ export default function App() {
           },
         }}
       />
-
+       <Stack.Screen
+        name="EditarAniversarios"
+        component={EditarAniversarioModal}
+        options={{
+          headerStyle: {
+            backgroundColor: "#EA86BF",
+            height: 100,
+          },
+          headerTitleStyle: {
+            fontSize: 25,
+            color: "black",
+            marginTop: -10,
+          },
+          headerLeftContainerStyle: {
+            marginTop: -10,
+          },
+        }}
+      />
         <Stack.Screen
           name="Estudos"
           component={EstudosScreen}

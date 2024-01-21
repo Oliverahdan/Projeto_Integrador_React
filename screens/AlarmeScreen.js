@@ -218,14 +218,30 @@ export default function AlarmeScreen({ navigation }) {
     }
   };
 
+  const formatarHorario = (text) => {
+    // Remover caracteres não numéricos
+    const numericText = text.replace(/[^\d]/g, '');
+  
+    // Adicionar ":" após os dois primeiros dígitos
+    const formattedText = numericText.replace(/(\d{2})(\d{0,2})/, '$1:$2');
+  
+    return formattedText;
+  };
+
   return (
     <Grid style={styles.container}>
       <Row style={styles.botoes} size={3}>
-        <FlatList
-          data={alarmesData}
-          keyExtractor={(item) => item.id}
-          renderItem={renderAlarmeItem}
-        />
+        {alarmesData.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Text>Você não tem alarmes marcados</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={alarmesData}
+            keyExtractor={(item) => item.id}
+            renderItem={renderAlarmeItem}
+          />
+        )}
       </Row>
 
       {showDetailsModal && selectedAlarmDetails && (
@@ -251,7 +267,7 @@ export default function AlarmeScreen({ navigation }) {
         </Modal>
       )}
 
-      <Row style={styles.botoes} size={1}>
+    <Row style={styles.botoes} size={1}>
         <TouchableOpacity onPress={openAddAlarmeModal}>
           <View style={styles.botaoAdicionar}>
             <Text style={styles.textoBotaoAdicionar}>Adicionar Alarme</Text>
@@ -271,9 +287,10 @@ export default function AlarmeScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="Horário"
+              keyboardType='numeric'
               value={novoAlarme.horario}
               onChangeText={(text) =>
-                setNovoAlarme({ ...novoAlarme, horario: text.slice(0, 5) })
+                setNovoAlarme({ ...novoAlarme, horario: formatarHorario(text) })
               }
               maxLength={5}
             />
@@ -327,11 +344,13 @@ export default function AlarmeScreen({ navigation }) {
                 Escolher {chooseDaysOfWeek ? 'Data' : 'Dias da Semana'}
               </Text>
             </TouchableOpacity>
+            <View>
             <CustomButton
               onPress={adicionarAlarme}
               title="Adicionar"
               marginBottom={10}
             />
+            </View>
             <CustomButton
               onPress={closeAddAlarmeModal}
               title="Cancelar"
@@ -346,6 +365,11 @@ export default function AlarmeScreen({ navigation }) {
 
 
 const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#E8EBEE',
@@ -447,6 +471,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
+    borderRadius: 20.
   },
   itemTitulo: {
     flex: 1,

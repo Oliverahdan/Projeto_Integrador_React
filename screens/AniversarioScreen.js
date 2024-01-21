@@ -13,7 +13,7 @@ import { Grid, Row, Col } from "react-native-easy-grid";
 import { Picker } from "@react-native-picker/picker";
 import { Calendar } from "react-native-calendars";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Notifications from 'expo-notifications';
+
 
 const STORAGE_KEY = "aniversarios";
 
@@ -27,7 +27,6 @@ export default function AniversarioScreen() {
 
   useEffect(() => {
     loadAniversarios();
-    registerForPushNotificationsAsync();
   }, []);
 
   const loadAniversarios = async () => {
@@ -52,8 +51,7 @@ export default function AniversarioScreen() {
       );
       setAniversarios(novosAniversarios);
       setErroInsercao("");
-
-      sendPushNotification(`Lembrete: ${nome}'s aniversário está chegando!`);
+    
     } catch (error) {
       console.error("Erro ao salvar aniversário no AsyncStorage:", error);
       setErroInsercao(
@@ -62,34 +60,6 @@ export default function AniversarioScreen() {
     }
   };
 
-  const registerForPushNotificationsAsync = async () => {
-    try {
-      const { status } = await Notifications.getPermissionsAsync();
-      console.log('Status de permissões:', status);
-
-      if (status !== 'granted') {
-        const { status: askStatus } = await Notifications.requestPermissionsAsync();
-        console.log('Status de permissões após a solicitação:', askStatus);
-
-        if (askStatus !== 'granted') {
-          console.log('Permissão de notificação não concedida');
-          return;
-        }
-      }
-
-      const deviceToken = (await Notifications.getDevicePushTokenAsync()).data;
-      console.log('Device Token:', deviceToken);
-    } catch (error) {
-      console.error('Erro ao obter o token do dispositivo:', error);
-    }
-  };
-
-  const sendPushNotification = async (message) => {
-    await Notifications.presentNotificationAsync({
-      title: "Novo Aniversário Adicionado!",
-      body: message,
-    });
-  };
 
   const handleDateChange = (text) => {
     let formattedText = text;
@@ -146,6 +116,8 @@ export default function AniversarioScreen() {
   const closeCalendar = () => {
     setCalendarVisible(false);
   };
+
+  
 
   return (
     <TouchableWithoutFeedback onPress={closeCalendar}>
@@ -260,7 +232,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     borderColor: '#CDD0D4',
-    width: 220,
+    width: 250,
   },
   calendarIcon: {
     width: 40,
@@ -285,7 +257,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     overflow: 'hidden',
     padding: 10,
-    width: 220,
+    width: 250,
     height: 60,
     position: 'relative',
     marginTop: -40,
@@ -309,10 +281,11 @@ const styles = StyleSheet.create({
   notiContainer: {
     borderWidth: 2,
     borderRadius: 5,
-    width: 220,
+    width: 250,
     height: 60,
     justifyContent: 'center',
     borderColor: '#CDD0D4', // Adicionado para centralizar o conteúdo na vertical
+    marginTop:-5,
   },
   adicionar: {
     marginTop: 20,
