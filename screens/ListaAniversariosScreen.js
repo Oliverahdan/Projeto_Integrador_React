@@ -134,7 +134,8 @@ const ListaAniversariosScreen = () => {
       const [day, month] = aniversario.dataNascimento.split('/').map(Number);
   
       // Obter a data atual
-      const currentDate = moment();
+      const currentDate = moment().tz('America/Sao_Paulo');
+
   
       // Configurar a data da notificação para o próximo aniversário
       let notificationDate = moment(aniversario.dataNascimento, 'DD/MM/YYYY').tz('America/Sao_Paulo');

@@ -125,7 +125,7 @@ export default function AniversarioScreen() {
         <Col style={{ flex: 1 }}>
           <Row style={[styles.titulo, { justifyContent: "center", alignItems: "center", flexDirection: "column" }]}>
             <Text style={styles.titulotext}>Marque um Aniversário</Text>
-            <Text style={styles.subtitulotext}>Veja os seus aniversários no icone de menu acima.</Text>
+            <Text style={styles.subtitulotext}>Veja os marcados no icone de menu acima.</Text>
           </Row>
 
           <Row style={[styles.rowContainer, { alignItems: 'center' }]}>
@@ -233,6 +233,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderColor: '#CDD0D4',
     width: 250,
+    paddingLeft: 20,
+    backgroundColor: "white",
   },
   calendarIcon: {
     width: 40,
@@ -262,6 +264,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginTop: -40,
     zIndex: 1, // Adiciona um índice de sobreposição
+    backgroundColor: "white",
   },
   calendarContainer: {
     position: 'absolute',
@@ -286,6 +289,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderColor: '#CDD0D4', // Adicionado para centralizar o conteúdo na vertical
     marginTop:-5,
+    backgroundColor: "white",
   },
   adicionar: {
     marginTop: 20,
@@ -307,6 +311,9 @@ const styles = StyleSheet.create({
   textoBotaoAdicionar: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#822E5E',
+    color: 'black',
   },
+  subtitulotext:{
+    marginTop: 10,
+  }
 });

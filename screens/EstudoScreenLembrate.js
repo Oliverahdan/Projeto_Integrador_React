@@ -20,8 +20,13 @@ export default function EstudoScreenLembrate() {
   const [showMessage, setShowMessage] = useState(false);
   const [reminderInfo, setReminderInfo] = useState(null);
 
+  const formatarDataBrasileira = (data) => {
+    const partesData = data.split("-");
+    return `${partesData[2]}/${partesData[1]}/${partesData[0]}`;
+  };
+
   const handleDateSelect = (date) => {
-    setSelectedDate(date.dateString);
+    setSelectedDate(formatarDataBrasileira(date.dateString));
   };
 
   const handleSave = async () => {
@@ -59,9 +64,8 @@ export default function EstudoScreenLembrate() {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text style={{ fontSize: 18, marginBottom: 16 }}>
-        Você irá estudar {selectedHourValue} horas de{" "}
-        {competencias[selectedSubjectValue]} no dia:
+      <Text style={{ fontSize: 24, marginBottom: 16 }}>
+        Marque o dia no calendário
       </Text>
 
       {selectedDate && (
@@ -88,10 +92,10 @@ export default function EstudoScreenLembrate() {
           style={{
             fontSize: 18,
             fontWeight: "bold",
-            color: "#822E5E",
+            color: "black",
           }}
         >
-          Estudar
+          Marcar
         </Text>
       </TouchableOpacity>
       {}

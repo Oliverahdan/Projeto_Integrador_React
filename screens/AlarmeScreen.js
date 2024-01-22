@@ -13,12 +13,15 @@ import { Grid, Row } from 'react-native-easy-grid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Calendar } from 'react-native-calendars';
 import Modal from 'react-native-modal';
+import moment from 'moment-timezone';
+import * as Notifications from 'expo-notifications';
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 const CustomButton = ({ onPress, title, marginBottom, selected }) => (
   <TouchableOpacity
     style={[
       styles.dayButton,
-      { marginBottom, backgroundColor: selected ? '#EA86BF' : '#F5F5F5' },
+      { elevation: 4, marginBottom, backgroundColor: selected ? '#EA86BF' : '#F5F5F5' },
     ]}
     onPress={onPress}
   >
@@ -141,8 +144,10 @@ export default function AlarmeScreen({ navigation }) {
     if (chooseDaysOfWeek && !validarDiasSemana(novoAlarmeData)) {
       return;
     }
-
+  
     setAlarmesData([...alarmesData, novoAlarmeData]);
+    scheduleLocalNotification(novoAlarmeData); // Add this line to schedule the notification
+  
     closeAddAlarmeModal();
   };
 
@@ -167,12 +172,12 @@ export default function AlarmeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
+
       <TouchableOpacity
-        style={styles.excluirButtonFixed}
-        onPress={() => excluirAlarme(item.id)}
-      >
-        <Text style={styles.excluirButtonText}>Excluir</Text>
-      </TouchableOpacity>
+      style={styles.excluirButtonFixed}
+      onPress={() => excluirAlarme(item.id)}>
+       <Icon name="delete" size={24} color="black" />
+              </TouchableOpacity>
     </View>
   );
 
@@ -227,6 +232,87 @@ export default function AlarmeScreen({ navigation }) {
   
     return formattedText;
   };
+
+const checkNotificationPermissions = async () => {
+  try {
+    const { status } = await Notifications.getPermissionsAsync();
+    console.log('Status de permissões de notificação:', status);
+
+    if (status !== 'granted') {
+      const { status: askStatus } = await Notifications.requestPermissionsAsync();
+      console.log('Status de permissões após a solicitação:', askStatus);
+
+      if (askStatus !== 'granted') {
+        console.log('Permissão de notificação não concedida');
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao verificar as permissões de notificação:', error);
+  }
+};
+
+// Call the function somewhere in your code, perhaps at the beginning or during initialization
+checkNotificationPermissions();
+
+
+const scheduleLocalNotification = async (alarme) => {
+  try {
+    console.log('Chamando scheduleLocalNotification para o alarme:', alarme);
+
+    const { horario, repeatWeekly, selectedDays, selectedDate, titulo } = alarme;
+
+    // Obter a data atual no fuso horário do Brasil
+    const currentDate = moment().tz('America/Sao_Paulo');
+    console.log('Tempo atual:', currentDate.format());
+
+    // Configurar a data da notificação
+    let notificationDate;
+
+    if (repeatWeekly) {
+      // Caso o alarme seja repetitivo, encontrar o próximo dia da semana selecionado
+      const selectedDay = Object.keys(selectedDays).find(day => selectedDays[day]);
+      notificationDate = moment().isoWeekday(selectedDay);
+    } else {
+      // Caso o alarme seja único, usar a data selecionada
+      notificationDate = moment(selectedDate);
+    }
+
+    // Configurar a hora da notificação
+    const [hour, minute] = horario.split(':');
+    notificationDate.set('hour', hour);
+    notificationDate.set('minute', minute);
+
+    // Converter a hora da notificação para o fuso horário do Brasil
+    notificationDate = notificationDate.tz('America/Sao_Paulo');
+    console.log('Data da notificação:', notificationDate.format());
+
+    // Verificar se a data já passou, se sim, configurar para o próximo ano ou semana
+    if (notificationDate.isBefore(currentDate)) {
+      repeatWeekly ? notificationDate.add(1, 'week') : notificationDate.add(1, 'year');
+    }
+
+    // Calcular o tempo restante até a data da notificação
+    const timeUntilNotification = notificationDate.diff(currentDate, 'seconds');
+    console.log('Tempo até a notificação (segundos):', timeUntilNotification);
+
+    // Agendar a notificação
+    const schedulingOptions = {
+      content: {
+        title: 'Alarme!',
+        body: `Alarme: ${titulo}`,
+      },
+      trigger: {
+        seconds: timeUntilNotification,
+      },
+    };
+
+    const identifier = await Notifications.scheduleNotificationAsync(schedulingOptions);
+    console.log('Notificação agendada:', identifier);
+  } catch (error) {
+    console.error('Erro ao agendar notificação:', error);
+  }
+};
+
 
   return (
     <Grid style={styles.container}>
@@ -380,11 +466,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#CDD0D4',
+    borderRadius: 5,
+    padding: 10,
   },
   itemContainer: {
     borderBottomWidth: 1,
     borderBottomColor: '#E6E9ED',
-    padding: 20,
   },
   itemContent: {
     flex: 1,
@@ -423,7 +512,7 @@ const styles = StyleSheet.create({
   textoBotaoAdicionar: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#822E5E',
+    color: 'black',
   },
   miniDisplay: {
     position: 'absolute',
@@ -467,8 +556,8 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
+    borderColor: '#CDD0D4',
+    borderWidth: 2,
     marginBottom: 10,
     paddingHorizontal: 10,
     borderRadius: 20.
@@ -510,8 +599,7 @@ const styles = StyleSheet.create({
   excluirButtonFixed: {
     position: 'absolute',
     right: 10, // ou a posição desejada
-    top: 25, // ou a posição desejada
-    backgroundColor: '#EA86BF',
+    top: 15, // ou a posição desejada
     borderRadius: 10,
     padding: 10,
   },
@@ -521,7 +609,7 @@ const styles = StyleSheet.create({
   calendarContainer: {
     marginTop: 10,
     borderWidth: 2,
-    borderColor: '#EA86BF',
+    borderColor: '#CDD0D4',
     borderRadius: 10,
     overflow: 'hidden',
   },

@@ -1,5 +1,5 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./screens/HomeScreen";
 import AlarmeScreen from "./screens/AlarmeScreen";
@@ -10,6 +10,21 @@ import ListaLembretesScreen from "./screens/ListaLembretesScreen";
 import ListaAniversariosScreen from "./screens/ListaAniversariosScreen";
 import { TouchableOpacity, Image} from "react-native";
 import EditarAniversarioModal from "./screens/EditarAniversarioModal";
+
+const MenuIcon = () => {
+  const navigation = useNavigation();
+
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.navigate('ListaLembretesScreen')}
+      style={{ marginRight: 15 }}
+    >
+      <Image
+        source={require("../Projeto_Integrador_React/assets/menu.png")}
+      />
+    </TouchableOpacity>
+  );
+};
 
 
 const Stack = createStackNavigator();
@@ -65,6 +80,7 @@ export default function App() {
         name="ListaAniversarios"
         component={ListaAniversariosScreen}
         options={{
+          title:"Lista de Aniversários",
           headerStyle: {
             backgroundColor: "#EA86BF",
             height: 100,
@@ -107,11 +123,13 @@ export default function App() {
             },
             headerTitleStyle: {
               fontSize: 25,
-              color: "#765A13",
+              color: "black",
+              marginTop: -10,
             },
             headerLeftContainerStyle: {
-              marginTop: 0,
+              marginTop: -10,
             },
+            headerRight: () => <MenuIcon />,
           }}
         />
         <Stack.Screen
@@ -124,11 +142,11 @@ export default function App() {
             },
             headerTitleStyle: {
               fontSize: 25,
-              color: "#765A13",
-              marginTop: -35,
+              color: "black",
+              marginTop: -10,
             },
             headerLeftContainerStyle: {
-              marginTop: -35,
+              marginTop: -10,
             },
           }}
         />
@@ -136,17 +154,18 @@ export default function App() {
           name="EstudoScreenLembrate"
           component={EstudoScreenLembrate}
           options={{
+            title: "Agende o Dia",
             headerStyle: {
               backgroundColor: "#FCD167",
               height: 100,
             },
             headerTitleStyle: {
               fontSize: 25,
-              color: "#765A13",
-              marginTop: -35,
+              color: "black",
+              marginTop: -10,
             },
             headerLeftContainerStyle: {
-              marginTop: -35,
+              marginTop: -10,
             },
           }}
         />
@@ -154,17 +173,18 @@ export default function App() {
           name="ListaLembretesScreen"
           component={ListaLembretesScreen}
           options={{
+            title: "Lista de Estudos",
             headerStyle: {
               backgroundColor: "#FCD167",
               height: 100,
             },
             headerTitleStyle: {
               fontSize: 25,
-              color: "#765A13",
-              marginTop: -35,
+              color: "black",
+              marginTop: -10,
             },
             headerLeftContainerStyle: {
-              marginTop: -35,
+              marginTop: -10,
             },
           }}
         />

@@ -34,9 +34,11 @@ export default function EstudosScreen() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.titulotext}>Agende seus Estudos</Text>
+      <Text style={styles.subtitulotext}>Veja os marcados no icone de menu acima.</Text>
       <View style={styles.column}>
         <Text style={styles.title}>
-          Quantas horas por dia você irá estudar: {selectedHourValue} horas
+          Quantas horas por dia você irá estudar?
         </Text>
         <View
           style={{
@@ -64,8 +66,8 @@ export default function EstudosScreen() {
       </View>
 
       <View style={styles.column}>
-        <Text style={styles.title}>
-          Escolha uma matéria para estudar: {competencias[selectedSubjectValue]}
+        <Text style={[styles.title, { marginTop:30}]}>
+          Escolha uma matéria para estudar
         </Text>
         <View
           style={{
@@ -98,7 +100,7 @@ export default function EstudosScreen() {
           style={{
             fontSize: 18,
             fontWeight: "bold",
-            color: "#822E5E",
+            color: "black",
             textAlign: "center",
           }}
         >
@@ -110,6 +112,16 @@ export default function EstudosScreen() {
 }
 
 const styles = StyleSheet.create({
+  titulotext:{
+    fontSize: 25,
+    position: "absolute",
+    top: 50,
+  },
+  subtitulotext:{
+    fontSize: 13,
+    position: "absolute",
+    top: 90,
+  },
   container: {
     flex: 1,
     backgroundColor: "#E8EBEE",
@@ -126,21 +138,22 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    marginBottom: 8,
+    marginBottom: 17,
   },
   pickerBackground2: {
-    backgroundColor: "#EA86BF",
+    backgroundColor: "white",
   },
   pickerBackground3: {
-    backgroundColor: "#EA86BF",
+    backgroundColor: "white",
   },
   continueButton: {
-    marginTop: 20,
+    marginTop: 30,
     width: 150,
     height: 60,
     backgroundColor: "#EA86BF",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 20,
+    
   },
 });
