@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -12,6 +12,7 @@ const STORAGE_KEY = 'aniversarios';
 const ListaAniversariosScreen = () => {
   const navigation = useNavigation();
   const [aniversarios, setAniversarios] = useState([]);
+  
 
   useEffect(() => {
     loadAniversarios();
@@ -79,6 +80,12 @@ const ListaAniversariosScreen = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAniversario, setSelectedAniversario] = useState(null);
+  const [viewDateModalVisible, setViewDateModalVisible] = useState(false);
+
+  const handleViewDate = (aniversario) => {
+    setSelectedAniversario(aniversario);
+    setViewDateModalVisible(true);
+  };
 
   const handleEdit = (aniversario) => {
     if (aniversario && aniversario.nome) {
@@ -166,6 +173,11 @@ const ListaAniversariosScreen = () => {
     }
   };
   
+  const handleAniversarioPress = (aniversario) => {
+    setSelectedAniversario(aniversario);
+    setModalVisible(true);
+  };
+
   return (
     <View style={styles.container}>
       {aniversarios.length === 0 ? (
@@ -175,22 +187,38 @@ const ListaAniversariosScreen = () => {
           data={aniversarios}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
-            <View style={styles.aniversarioContainer}>
-              <Text style={styles.nomeText}>{`Nome: ${item.nome}`}</Text>
-              <Text style={styles.idadeText}>{`Idade: ${calculateAge(item.dataNascimento)}`}</Text>
-              
-              <TouchableOpacity onPress={() => item && handleEdit(item)}>
-                <Icon name="edit" size={24} color="black" />
-              </TouchableOpacity>
-  
-              <TouchableOpacity onPress={() => item && handleExcluir(index)}>
-                <Icon name="delete" size={24} color="black" />
-              </TouchableOpacity>
-  
-            </View>
+            <TouchableOpacity onPress={() => handleViewDate(item)}>
+              <View style={styles.aniversarioContainer}>
+                <Text style={styles.nomeText}>{`Nome: ${item.nome}`}</Text>
+                <Text style={styles.idadeText}>{`Idade: ${calculateAge(item.dataNascimento)}`}</Text>
+                <TouchableOpacity onPress={() => item && handleEdit(item)}>
+                  <Icon name="edit" size={24} color="black" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => item && handleExcluir(index)}>
+                  <Icon name="delete" size={24} color="black" />
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
           )}
         />
       )}
+
+<Modal
+        visible={viewDateModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setViewDateModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalDateText}>{`Data de Aniversário: ${selectedAniversario?.dataNascimento}`}</Text>
+            <TouchableOpacity onPress={() => setViewDateModalVisible(false)} style={styles.modalCloseButton}>
+              <Text style={styles.modalCloseButtonText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <EditarAniversarioModal
         isVisible={modalVisible}
         aniversario={selectedAniversario}
@@ -199,7 +227,7 @@ const ListaAniversariosScreen = () => {
       />
     </View>
   );
-}  
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -225,6 +253,32 @@ const styles = StyleSheet.create({
   idadeText: {
     fontSize: 14,
     color: '#555',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Cor escura de fundo
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: 300,
+    alignItems: 'center',
+  },
+  modalDateText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  modalCloseButton: {
+    backgroundColor: '#3498db',
+    padding: 10,
+    borderRadius: 5,
+  },
+  modalCloseButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 

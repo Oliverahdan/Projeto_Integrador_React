@@ -270,17 +270,21 @@ const scheduleLocalNotification = async (alarme) => {
 
     if (repeatWeekly) {
       // Caso o alarme seja repetitivo, encontrar o próximo dia da semana selecionado
-      const selectedDay = Object.keys(selectedDays).find(day => selectedDays[day]);
+      const selectedDay = moment().isoWeekday(selectedDay); // inicializando selectedDay
       notificationDate = moment().isoWeekday(selectedDay);
+      while (notificationDate.isBefore(currentDate)) {
+        notificationDate.add(7, 'days');
+      }
     } else {
       // Caso o alarme seja único, usar a data selecionada
       notificationDate = moment(selectedDate);
     }
-
+    
     // Configurar a hora da notificação
     const [hour, minute] = horario.split(':');
     notificationDate.set('hour', hour);
     notificationDate.set('minute', minute);
+    notificationDate.set('second', 0); // Definir segundos como 0
 
     // Converter a hora da notificação para o fuso horário do Brasil
     notificationDate = notificationDate.tz('America/Sao_Paulo');
@@ -312,7 +316,6 @@ const scheduleLocalNotification = async (alarme) => {
     console.error('Erro ao agendar notificação:', error);
   }
 };
-
 
   return (
     <Grid style={styles.container}>

@@ -175,7 +175,7 @@ export default function App() {
           options={{
             title: "Lista de Estudos",
             headerStyle: {
-              backgroundColor: "#FCD167",
+              backgroundColor: "#EA86BF",
               height: 100,
             },
             headerTitleStyle: {
