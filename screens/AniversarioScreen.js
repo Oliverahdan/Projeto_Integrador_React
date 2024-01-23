@@ -6,8 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  Button,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView 
 } from "react-native";
 import { Grid, Row, Col } from "react-native-easy-grid";
 import { Picker } from "@react-native-picker/picker";
@@ -24,6 +24,7 @@ export default function AniversarioScreen() {
   const [intervaloNotificacao, setIntervaloNotificacao] = useState("");
   const [aniversarios, setAniversarios] = useState([]);
   const [erroInsercao, setErroInsercao] = useState("");
+  const [feedbackMensagem, setFeedbackMensagem] = useState(""); // Adicione esta linha
 
   useEffect(() => {
     loadAniversarios();
@@ -105,12 +106,18 @@ export default function AniversarioScreen() {
       setErroInsercao("Preencha todos os campos antes de adicionar.");
       return;
     }
-  
+
     saveAniversario();
 
     setNome("");
     setDataNascimento("");
     setIntervaloNotificacao("");
+
+    // Adiciona mensagens de feedback
+    setFeedbackMensagem("Aniversário adicionado com sucesso!");
+    setTimeout(() => {
+      setFeedbackMensagem("");
+    }, 3000);
   };
 
   const closeCalendar = () => {
@@ -121,6 +128,7 @@ export default function AniversarioScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={closeCalendar}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
       <Grid style={styles.container}>
         <Col style={{ flex: 1 }}>
           <Row style={[styles.titulo, { justifyContent: "center", alignItems: "center", flexDirection: "column" }]}>
@@ -200,13 +208,33 @@ export default function AniversarioScreen() {
         </TouchableOpacity>
           </Row>
 
+          <Row style={styles.rowContainer}>
+            {erroInsercao !== "" && (
+              <Text style={styles.erroText}>{erroInsercao}</Text>
+            )}
+            {feedbackMensagem !== "" && (
+              <Text style={styles.feedbackText}>{feedbackMensagem}</Text>
+            )}
+          </Row>
+
         </Col>
       </Grid>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
+  feedbackText: {
+    marginTop: 10,
+    color: "green",
+    fontSize: 16,
+  },
+  erroText: {
+    marginTop: 10,
+    color: "red",
+    fontSize: 16,
+  },
   titulotext:{
     fontSize: 25,
   },

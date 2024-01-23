@@ -4,7 +4,7 @@
     "slug": "Lembrapp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/1.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -17,7 +17,10 @@
         {
           "icon": "./local/path/to/myNotificationIcon.png",
           "color": "#ffffff",
-          "sounds": ["./local/path/to/mySound.wav", "./local/path/to/myOtherSound.wav"],
+          "sounds": [
+            "./local/path/to/mySound.wav",
+            "./local/path/to/myOtherSound.wav"
+          ],
           "mode": "production"
         }
       ]
@@ -37,6 +40,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b8de8568-3e1d-4a3f-b52e-6b01db4ec9c2"
+      }
     }
   }
 }

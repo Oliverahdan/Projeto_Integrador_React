@@ -37,10 +37,11 @@ export default function EstudoScreenLembrate() {
       existingDataArray.push({
         selectedHourValue,
         selectedSubjectValue: competencias[selectedSubjectValue],
-        selectedDate,
+        selectedDate: formatarDataBrasileira(selectedDate),
       });
 
       await AsyncStorage.setItem("estudos", JSON.stringify(existingDataArray));
+
 
       console.log("Informações salvas com sucesso!");
 
@@ -77,27 +78,28 @@ export default function EstudoScreenLembrate() {
       <Calendar onDayPress={handleDateSelect} />
 
       <TouchableOpacity
-        style={{
-          marginTop: 20,
-          width: 150,
-          height: 60,
-          backgroundColor: "#EA86BF",
-          justifyContent: "center",
-          alignItems: "center",
-          borderRadius: 10,
-        }}
-        onPress={handleSave}
-      >
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: "bold",
-            color: "black",
-          }}
-        >
-          Marcar
-        </Text>
-      </TouchableOpacity>
+  style={{
+    marginTop: 20,
+    width: 150,
+    height: 60,
+    backgroundColor: "#EA86BF",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  }}
+  onPress={handleSave}
+  disabled={!selectedDate} // Desabilita o botão se não houver uma data selecionada
+>
+  <Text
+    style={{
+      fontSize: 18,
+      fontWeight: "bold",
+      color: selectedDate ? "black" : "#888", // Altera a cor do texto conforme o estado do botão
+    }}
+  >
+    Marcar
+  </Text>
+</TouchableOpacity>
       {}
       <Modal
         visible={showMessage}

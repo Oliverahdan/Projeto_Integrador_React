@@ -9,7 +9,7 @@ export default function HomeScreen({ navigation }) {
 
       <View style={styles.botoes}>
         <Image
-          source={require("../../Projeto_Integrador_React/assets/1.png")}
+          source={require("../assets/1.png")}
           style={styles.background}
         />
       </View>
@@ -22,7 +22,7 @@ export default function HomeScreen({ navigation }) {
           style={styles.retangulo}
         >
             <Image
-              source={require("../../Projeto_Integrador_React/assets/estudos.png")}
+              source={require("../assets/estudos.png")}
               style={styles.image}
             />
             <Text style={styles.estudos}>Estudos</Text>
@@ -35,7 +35,7 @@ export default function HomeScreen({ navigation }) {
           style={styles.retangulo}
         >
             <Image
-              source={require("../../Projeto_Integrador_React/assets/alarmes.png")}
+              source={require("../assets/alarmes.png")}
               style={styles.image}
             />
             <Text style={styles.alarmes}>Alarmes</Text>
@@ -49,7 +49,7 @@ export default function HomeScreen({ navigation }) {
           style={styles.retangulo}
         >
             <Image
-              source={require("../../Projeto_Integrador_React/assets/aniversario.png")}
+              source={require("../assets/aniversario.png")}
               style={styles.image}
             />
             <Text style={styles.aniversario}>Aniversários</Text>
