@@ -20,7 +20,7 @@ const MenuIcon = () => {
       style={{ marginRight: 15 }}
     >
       <Image
-        source={require("../Projeto_Integrador_React/assets/menu.png")}
+        source={require("../assets/menu.png")}
       />
     </TouchableOpacity>
   );
@@ -70,7 +70,7 @@ export default function App() {
                 style={{ marginRight: 15 }}
               >
                <Image
-                source={require("../Projeto_Integrador_React/assets/menu.png")}
+                source={require("../assets/menu.png")}
               />
               </TouchableOpacity>
             ),
